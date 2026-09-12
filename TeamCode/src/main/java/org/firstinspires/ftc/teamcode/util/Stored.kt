@@ -1,0 +1,7 @@
+package org.firstinspires.ftc.teamcode.util
+
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
+
+var storedPose: Pose? = null
+
+var storedRed: Reference<Boolean> = Reference(false)

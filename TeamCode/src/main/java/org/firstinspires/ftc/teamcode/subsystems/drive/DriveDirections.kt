@@ -1,0 +1,63 @@
+package org.firstinspires.ftc.teamcode.subsystems.drive
+
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.Utility
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Vector
+import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
+import org.firstinspires.ftc.teamcode.util.Reference
+import org.firstinspires.ftc.teamcode.util.robotWidth
+import org.firstinspires.ftc.teamcode.util.storedRed
+import org.firstinspires.ftc.teamcode.util.toDouble
+
+@Utility(name = "Drive Debugger")
+class DriveDebugger: LinearOpMode() {
+
+    override fun runOpMode() {
+        val drive = Drive(hardwareMap)
+        drive.localizer.setWheelieBulkreadScope()
+        val reads = Reads(hardwareMap)
+        val dash = FtcDashboard.getInstance()
+        val telemetry = MultipleTelemetry(telemetry, dash.telemetry)
+
+        waitForStart()
+        drive.localizer.pose = Pose(0.0, 0.0, 0.0)
+        storedRed = Reference(true)
+        while (opModeIsActive()){
+            reads.update()
+
+            drive.setFlPower(gamepad1.x.toDouble())
+            drive.setFrPower(gamepad1.y.toDouble())
+            drive.setBlPower(gamepad1.a.toDouble())
+            drive.setBrPower(gamepad1.b.toDouble())
+
+            val packet = TelemetryPacket()
+            val canvas = packet.fieldOverlay()
+            canvas.setStrokeWidth(1)
+            canvas.strokeCircle(drive.localizer.pose.x - 72.0, drive.localizer.pose.y, robotWidth/2.0)
+            canvas.strokeLine(
+                drive.localizer.pose.x - 72.0,
+                drive.localizer.pose.y,
+                drive.localizer.pose.x - 72.0 + Vector.fromPolar(drive.localizer.heading, robotWidth/2.0).x,
+                drive.localizer.pose.y + Vector.fromPolar(drive.localizer.heading, robotWidth/2.0).y
+            )
+            dash.sendTelemetryPacket(packet)
+
+            telemetry.addData("pinpoint lt", drive.localizer.pinpoint.loopTime)
+            telemetry.addLine("Switch directions of backwards motors in Drive.kt")
+            telemetry.addLine("X -> FL")
+            telemetry.addLine("Y -> FR")
+            telemetry.addLine("A -> BL")
+            telemetry.addLine("B -> BR")
+            telemetry.addLine("Switch directions of backwards encoders in Localizer.kt")
+            telemetry.addData("x", drive.localizer.x)
+            telemetry.addData("y", drive.localizer.y)
+            telemetry.addData("h", drive.localizer.heading)
+            //telemetry.addData("pitch", drive.localizer.pinpoint.getPitch(AngleUnit.RADIANS))
+            telemetry.update()
+        }
+    }
+}
