@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.drive.tuners
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.eventloop.opmode.Utility
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.sysid.SysIDRoutine
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 
-@TeleOp(name = "Drive SysID", group = "Tuning")
+@Utility(name = "Drive SysID")
 class DriveSysID() : SysIDRoutine<Drive>(
     "Drive",
     arrayOf("x", "y", "heading"),

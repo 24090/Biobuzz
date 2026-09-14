@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.commands
 
 import org.firstinspires.ftc.teamcode.util.timeSeconds
 
+/**
+ * A command which waits for a certain amount of time
+ * @param waitSeconds the amount of time to wait
+ */
 class Sleep(val waitSeconds: Double, name: String = "Sleep"): OverrideButtonCommand(name) {
     override fun nextInstant() = when (run()){
         CommandResult.Continue -> false

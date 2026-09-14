@@ -9,26 +9,20 @@ import org.firstinspires.ftc.teamcode.commands.Instant
 import org.firstinspires.ftc.teamcode.commands.Sequence
 import org.firstinspires.ftc.teamcode.commands.WaitUntil
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.kA
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.kS
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.kV
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.lateralFactor
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.tipAccelBackward
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.tipAccelForward
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.PurePursuitPath
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Vector
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.getPointToPoint
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.getPurePursuit
-import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.getRelativeVelocity
 import org.firstinspires.ftc.teamcode.subsystems.reads.VoltageReader.controlHubVoltage
 import org.firstinspires.ftc.teamcode.util.Reference
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
 @Config
-class Drive(hwMap: HardwareMap) {
-    val localizer = Localizer(hwMap)
+class Drive(hardwareMap: HardwareMap) {
+    val localizer = Localizer(hardwareMap)
 
     companion object DriveConstants {
         @JvmField var lateralFactor = 0.7
@@ -48,16 +42,16 @@ class Drive(hwMap: HardwareMap) {
         @JvmField var tipAccelForward = 900.0
         @JvmField var tipAccelBackward = -200.0
     }
-     val flMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hwMap.get(DcMotorEx::class.java, "fl"), true, 0.01)
+     val flMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "fl"), true, 0.01)
     fun setFlPower(power: Double) { flMotor.power = power }
 
-     val frMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hwMap.get(DcMotorEx::class.java, "fr"), true, 0.01)
+     val frMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "fr"), true, 0.01)
     fun setFrPower(power: Double) { frMotor.power = power }
 
-     val blMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hwMap.get(DcMotorEx::class.java, "bl"), true, 0.01)
+     val blMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "bl"), true, 0.01)
     fun setBlPower(power: Double) { blMotor.power = power }
 
-     val brMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hwMap.get(DcMotorEx::class.java, "br"), true, 0.01)
+     val brMotor: VoltageCompensatedMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "br"), true, 0.01)
     fun setBrPower(power: Double) { brMotor.power = power }
 
     private fun setZeroPowerBehaviours(zeroPowerBehavior: ZeroPowerBehavior) {
@@ -236,17 +230,11 @@ data class DriveVectors(val left: Vector, val right: Vector) {
             right = Vector.fromCartesian(drive, strafe)
         )
 
-        fun processTurnTranslational(turn: Double, translational: Vector, pose: Pose, velocity: Pose) =
-            processTurnDriveStrafe(turn, translational.x, translational.y, pose, velocity)
+        fun processTurnTranslational(turn: Double, translational: Vector) =
+            processTurnDriveStrafe(turn, translational.x, translational.y)
 
-        fun processTurnDriveStrafe(turn: Double, drive: Double, strafe: Double, pose: Pose, velocity: Pose) =
-            DriveVectors.fromRotation(turn)
-                .addWithoutPriority(DriveVectors.fromTranslation(drive, strafe), controlHubVoltage / 14.0)
-                .driveAccelCorrected(
-                    tipAccelBackward, tipAccelForward,
-                    kS, kV, kA,
-                    getRelativeVelocity(pose, velocity).x
-                )
+        fun processTurnDriveStrafe(turn: Double, drive: Double, strafe: Double) =
+            fromRotation(turn).addWithoutPriority(fromTranslation(drive, strafe), controlHubVoltage / 14.0)
     }
 
     override fun toString() = "[L $left, R $right]"

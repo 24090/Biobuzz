@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.commands
 
+/**
+ * A Command which generates a child when it is first run, and then runs that child.
+ *
+ * This is useful when a command needs to be created based on something that can only be known at runtime
+ * @param f the child generator
+ */
 class Future(val f: () -> Command, name: String): OverrideButtonCommand(name) {
     override fun nextInstant() = command?.nextInstant() ?: false
     private var command: Command? = null

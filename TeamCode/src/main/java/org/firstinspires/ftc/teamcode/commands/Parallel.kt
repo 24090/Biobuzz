@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands
 
+/**
+ * A command which runs all its children in parallel, and ends when its last child to end does
+ * @param commands list of children commands
+ */
 class Parallel(vararg commands: Command, name: String = "Parallel"): OverrideButtonCommand(name, true){
     val commands = ArrayList(commands.map {c -> c})
     override fun nextInstant() = commands.map(Command::nextInstant).reduce(Boolean::and)

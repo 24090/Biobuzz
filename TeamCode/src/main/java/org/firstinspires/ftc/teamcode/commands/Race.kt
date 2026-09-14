@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands
 
+/**
+ * A command which runs all its children in parallel, and ends when its first child to end does
+ * @param commands list of children commands
+ */
 class Race(vararg commands: Command): OverrideButtonCommand("Race", true){
     override fun nextInstant() = commands.map(Command::nextInstant).reduce(Boolean::and)
 

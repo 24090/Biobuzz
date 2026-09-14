@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 
-class Localizer(hwMap: HardwareMap) {
-    var pinpoint: GoBildaPinpointDriver = hwMap.get(GoBildaPinpointDriver::class.java, "pinpoint")
+class Localizer(hardwareMap: HardwareMap) {
+    var pinpoint: GoBildaPinpointDriver = hardwareMap.get(GoBildaPinpointDriver::class.java, "pinpoint")
     companion object {
         @JvmStatic var driveY: Double = -2.99
         @JvmStatic var strafeX: Double = -4.88

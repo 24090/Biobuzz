@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands
 
+/**
+ * A command which ends after running each of its children in the order provided
+ * @param commands list of children commands
+ */
 class Sequence(vararg commands: Command, name: String = "Sequence"): OverrideButtonCommand(name, true){
     override fun nextInstant() = currentCommand.nextInstant()
     private val pastCommands: ArrayList<DeadCommand> = ArrayList()
