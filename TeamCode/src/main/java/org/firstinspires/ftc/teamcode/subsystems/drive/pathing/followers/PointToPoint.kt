@@ -32,7 +32,7 @@ fun pointToPoint(pose: Pose, velocity: Pose, targetPose: Pose, full: Boolean = t
     return if (!full) {
         DriveVectors.fromRotation(turn) + DriveVectors.fromTranslation(drive, strafe)
     } else {
-        processTurnDriveStrafe(turn, drive, strafe, pose, velocity)
+        processTurnDriveStrafe(turn, drive, strafe)
     }
 }
 
@@ -49,5 +49,5 @@ fun moveShootPointToPoint(pose: Pose, velocity: Pose, targetPose: Pose, angle: D
     val drive = if (translational.x.isNaN()) 0.0 else translational.x
     val strafe = if (translational.y.isNaN()) 0.0 else translational.y
 
-    return processTurnDriveStrafe(turn, drive, strafe, pose, velocity)
+    return processTurnDriveStrafe(turn, drive, strafe)
 }
