@@ -13,19 +13,20 @@ import kotlin.math.PI
 
 @Disabled
 @Autonomous
-class FirstAuto (red: Boolean): AutoOpMode(red, Pose(132.7367941712204, 34.58566712204007, Math.toRadians(90.0)), { Race(
-
+class FirstAuto (red: Boolean): AutoOpMode(red, Pose(59.350637522768665, 8.773224043715848, Math.toRadians(0.0)), { Race(
+//gotocircle means that it will go to a certain area. NOT the name of the path
     Sequence( // tells the drivetrain to go to these points in order
-        drive.goToCircle(Pose(132.29143897996357, 58.16575591985431, Math.toRadians(90.0))), //gotocircle means that it will go to a certain area. NOT the name of the path
-        drive.goToCircle(Pose(124.66211293260474, 8.821493624772316, Math.toRadians(270.0))), //prepare to collect other balls
-        drive.goToCircle(Pose(133.19763205828778, 9.255009107468126, Math.toRadians(270.0))), //collect other balls
-        drive.goToCircle(Pose(132.0646630236794, 58.68032786885246,Math.toRadians(90.0))) //go back and shoot
-    ),
+        drive.goToCircle(Pose(27.132969034608386, 21.30874316939891, Math.toRadians(0.0))), // move and shoot
+        drive.goToCircle(Pose(8.505464480874313, 12.162169854280526, Math.toRadians(180.0))), //prepare to collect other balls
+        drive.goToCircle(Pose(8.440801457194901, 8.080145719489995, Math.toRadians(180.0))), //collect other balls
+        drive.goToCircle(Pose(42.98907103825137, 121.0009107468124,Math.toRadians(270.0))), //go to other side, shoot and prepare for flower collection
+        drive.goToCircle(Pose(46.18488160291437, 128.37340619307832, Math.toRadians(0.0))) //collect flower
+    ), // might have messed up the heading
     Forever { // updates the sensors and motors so that stuff actually happens
         reads.update()
         drive.update()
         telemetry.update()
-    }
-)})
+    }// obv this is all just speculation. i dont know if theres going to be a method for collecting flowers, if its going to be a turret etc.
+)})// this is just for learning purposes and is not final
 
-class ExampleAutoBlue: ExampleAutoOpMode(red = false) // creates the opmode above for blue alliance
+class ExampleAutoRed: ExampleAutoOpMode(red = true) // creates the opmode above for red alliance
