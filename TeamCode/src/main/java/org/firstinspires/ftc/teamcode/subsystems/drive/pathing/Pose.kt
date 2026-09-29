@@ -57,7 +57,7 @@ open class Pose(var x: Double, var y: Double, var heading: Double) {
         return "(x:" + "%.1f".format(x) +  " y:" + "%.1f".format(y) + " θ:" + "%.2f".format(heading) + ")"
     }
 
-    fun mirrored() = Pose(this.x, -this.y, -this.heading)
+    fun mirrored() = -this
 
     fun mirroredIf(v: Boolean) = if (v) this.mirrored() else this
 

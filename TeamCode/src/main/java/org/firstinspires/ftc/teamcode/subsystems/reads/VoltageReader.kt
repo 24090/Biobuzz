@@ -11,10 +11,10 @@ object VoltageReader {
 
     fun updater(hwMap: HardwareMap): () -> Unit {
         val controlHubVoltageSensor = hwMap.get(VoltageSensor::class.java, "Control Hub")
-        val expansionHubVoltageSensor = hwMap.get(VoltageSensor::class.java, "Expansion Hub 2")
+        //val expansionHubVoltageSensor = hwMap.get(VoltageSensor::class.java, "Expansion Hub 2")
         return {
             controlHubVoltage = controlHubVoltageSensor.voltage
-            expansionHubVoltage = expansionHubVoltageSensor.voltage
+            //expansionHubVoltage = expansionHubVoltageSensor.voltage
         }
     }
 }

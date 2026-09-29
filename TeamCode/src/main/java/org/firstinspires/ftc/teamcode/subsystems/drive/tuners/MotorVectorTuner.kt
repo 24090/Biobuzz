@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.teamcode.subsystems.drive.Localizer
 
 @Utility
-@TeleOp(group = "Drive")
 class MotorVectorTuner(): LinearOpMode() {
     override fun runOpMode() {
         val pinpoint = hardwareMap.get(GoBildaPinpointDriver::class.java, "pinpoint")

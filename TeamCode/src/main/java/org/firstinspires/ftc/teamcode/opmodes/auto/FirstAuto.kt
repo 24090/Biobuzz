@@ -29,4 +29,4 @@ class FirstAuto (red: Boolean): AutoOpMode(red, Pose(59.350637522768665, 8.77322
     }// obv this is all just speculation. i dont know if theres going to be a method for collecting flowers, if its going to be a turret etc.
 )})// this is just for learning purposes and is not final
 
-class ExampleAutoRed: ExampleAutoOpMode(red = true) // creates the opmode above for red alliance
+class FirstAutoRed: ExampleAutoOpMode(red = true) // creates the opmode above for red alliance
