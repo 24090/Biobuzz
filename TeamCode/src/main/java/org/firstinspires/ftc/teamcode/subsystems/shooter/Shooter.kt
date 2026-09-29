@@ -5,30 +5,29 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
 @Config
 class Shooter(hardwareMap: HardwareMap) {
     companion object {
         @JvmField
-        var KF = 0.00043
+        var kF = 0.00043
         @JvmField
-        var KP = 0.02
+        var kP = 0.02
     }
-    var TargetVelocity = 0.0
+    var targetVelocity = 0.0
     val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "flMotor")
 
     fun update() {
-        if (motor.velocity < TargetVelocity){
-            motor.power = (TargetVelocity - motor.velocity)*KP + TargetVelocity * KF
+        if (motor.velocity < targetVelocity){
+            motor.power = (targetVelocity - motor.velocity)*kP + targetVelocity * kF
         }
         else {
             motor.power = 0.0
         }
     }
 
-    fun GetEncoderSpeed(): Double{
+    fun getEncoderSpeed(): Double{
         return motor.velocity
     }
 }
@@ -44,9 +43,9 @@ class ShooterTesting: LinearOpMode() {
         waitForStart()
         shooter.update()
         while (opModeIsActive()) {
-            shooter.TargetVelocity = TargetVelocity
+            shooter.targetVelocity = TargetVelocity
             shooter.update()
-            telemetry.addData("encoder speed", "shooter.GetEncoderSpeed")
+            telemetry.addData("encoder speed", shooter.getEncoderSpeed())
             telemetry.update()
         }
     }
