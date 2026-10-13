@@ -7,11 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
+import org.firstinspires.ftc.teamcode.subsystems.controlsystems.sysid.MotorSysID
+
 @Config
 class Shooter(hardwareMap: HardwareMap) {
     companion object {
         @JvmField
-        var kF = 0.00043
+        var kF = 0.0003
         @JvmField
         var kP = 0.02
     }
@@ -31,6 +34,7 @@ class Shooter(hardwareMap: HardwareMap) {
         return motor.velocity
     }
 }
+
 @TeleOp
 @Config
 class ShooterTesting: LinearOpMode() {
@@ -49,5 +53,4 @@ class ShooterTesting: LinearOpMode() {
             telemetry.update()
         }
     }
-
 }
