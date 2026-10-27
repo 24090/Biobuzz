@@ -7,12 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 
 class Intake(hardwareMap: HardwareMap) {
+    var isRunning = false
     val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "intake")
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
     }
     fun update(){
-        motor.power = 1.0
+        if (isRunning) {
+            motor.power = (0.4 * 2300 - motor.velocity) * 0.001 + 0.4
+        } else {
+            motor.power = 0.0
+        }
     }
 }
 

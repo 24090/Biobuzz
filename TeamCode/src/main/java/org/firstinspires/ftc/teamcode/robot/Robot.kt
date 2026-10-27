@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.commands.Command
 import org.firstinspires.ftc.teamcode.commands.runBlocking
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
+import org.firstinspires.ftc.teamcode.subsystems.intake.Intake
+import org.firstinspires.ftc.teamcode.subsystems.intake.Transfer
 import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
 import org.firstinspires.ftc.teamcode.util.Reference
 import org.firstinspires.ftc.teamcode.util.storedRed
@@ -21,6 +23,9 @@ open class Robot(opMode: OpMode) {
 
     val reads = Reads(opMode.hardwareMap)
     val drive = Drive(opMode.hardwareMap)
+    val intake = Intake(opMode.hardwareMap)
+    val transfer = Transfer(opMode.hardwareMap)
+
 
     var time = System.currentTimeMillis()
     fun recordTime(name: String) {
