@@ -14,7 +14,7 @@ class Intake(hardwareMap: HardwareMap) {
     }
     fun update(){
         if (isRunning) {
-            motor.power = (0.4 * 2300 - motor.velocity) * 0.001 + 0.4
+            motor.power = (800 - motor.velocity) * 0.0008 + 0.35
         } else {
             motor.power = 0.0
         }
@@ -26,10 +26,13 @@ class IntakeTesting(): LinearOpMode() {
     override fun runOpMode() {
         // initialisation
         val intake = Intake(hardwareMap)
+        intake.isRunning = true
         waitForStart()
         // running
         while (opModeIsActive()){
             intake.update()
+            telemetry.addData("velocity", intake.motor.velocity)
+            telemetry.update()
         }
 
     }

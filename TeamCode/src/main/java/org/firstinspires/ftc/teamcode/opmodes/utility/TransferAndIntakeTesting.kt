@@ -10,6 +10,7 @@ class TransferAndIntakeTesting(): LinearOpMode() {
     override fun runOpMode() {
         val intake = Intake(hardwareMap)
         val transfer = Transfer(hardwareMap)
+        intake.isRunning = true
         waitForStart()
         while (opModeIsActive()){
             intake.update()

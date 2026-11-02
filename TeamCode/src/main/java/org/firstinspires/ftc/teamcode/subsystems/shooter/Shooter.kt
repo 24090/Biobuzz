@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.sysid.MotorSysID
@@ -19,7 +20,11 @@ class Shooter(hardwareMap: HardwareMap) {
         var kP = 0.02
     }
     var targetVelocity = 0.0
-    val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "flMotor")
+    val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
+
+    init {
+        motor.direction = DcMotorSimple.Direction.REVERSE
+    }
 
     fun update() {
         if (motor.velocity < targetVelocity){

@@ -19,23 +19,23 @@ import kotlin.math.PI
 class FirstAuto (red: Boolean): AutoOpMode(red, Pose(59.350637522768665, 8.773224043715848, Math.toRadians(90.0)), { Race(
 //gotocircle means that it will go to a certain area. NOT the name of the path
     Sequence( // tells the drivetrain to go to these points in order
-        shooter.start(),
+        //shooter.start(),
         Sleep(0.5),
-        shooter.stop(),
+       // shooter.stop(),
         drive.goToCircle(Pose(27.132969034608386, 21.30874316939891, Math.toRadians(180.0))), // move and shoot
         //Sleep(1.0),
         drive.goToCircle(Pose(8.505464480874313, 12.162169854280526, Math.toRadians(270.0))), //prepare to collect other balls
-        intake.start(),
+       // intake.start(),
         Sleep(1.5),
         drive.goToCircle(Pose(8.440801457194901, 8.080145719489995, Math.toRadians(270.0))), //collect other balls
-        intake.stop(),
+      //  intake.stop(),
         drive.goToCircle(Pose(42.98907103825137, 121.0009107468124,Math.toRadians(270.0))), //go to other side, shoot and prepare for flower collection
         drive.goToCircle(Pose(46.18488160291437, 128.37340619307832, Math.toRadians(300.0)))// shoot other side
     ), // might have messed up the heading
     Forever { // updates the sensors and motors so that stuff actually happens
         reads.update()
         drive.update()
-        shooter.update()
+     //   shooter.update()
         intake.update() // still needs to be made
         telemetry.update()
     }// obv this is all just speculation. i dont know if theres going to be a method for collecting flowers, if its going to be a turret etc.
