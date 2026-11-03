@@ -25,12 +25,16 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         if (opmode.gamepad1.x) {
             telemetry.addLine("x is pressed!")
+            intake.isRunning = true
         } else {
             telemetry.addLine("x is not pressed :(")
+            intake.isRunning = false
         }
 
         //reads.update() // reads sensors
         drive.update() // updates the drivetrain subsystem
+        intake.update()
+        transfer.update()
         telemetry.update() // sends telemetry to the driver station
     }
 })

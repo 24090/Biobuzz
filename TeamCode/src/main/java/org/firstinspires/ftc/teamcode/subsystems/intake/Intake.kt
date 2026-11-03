@@ -7,12 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 
 class Intake(hardwareMap: HardwareMap) {
+    var isRunning = false
     val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "intake")
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
     }
     fun update(){
-        motor.power = 1.0
+        if (isRunning) {
+            motor.power = (800 - motor.velocity) * 0.0008 + 0.35
+        } else {
+            motor.power = 0.0
+        }
     }
 }
 
@@ -21,10 +26,13 @@ class IntakeTesting(): LinearOpMode() {
     override fun runOpMode() {
         // initialisation
         val intake = Intake(hardwareMap)
+        intake.isRunning = true
         waitForStart()
         // running
         while (opModeIsActive()){
             intake.update()
+            telemetry.addData("velocity", intake.motor.velocity)
+            telemetry.update()
         }
 
     }

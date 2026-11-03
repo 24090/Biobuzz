@@ -13,7 +13,7 @@ class PowerMotor: LinearOpMode() {
 
     }
     override fun runOpMode() {
-        val motor = hardwareMap.get(DcMotor::class.java, "flMotor")
+        val motor = hardwareMap.get(DcMotor::class.java, "pollenShooter")
         waitForStart()
         while (opModeIsActive()){
             motor.power = power
