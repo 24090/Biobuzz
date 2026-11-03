@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.sysid.MotorSysID
 
@@ -18,12 +19,27 @@ class Shooter(hardwareMap: HardwareMap) {
         var kF = 0.0003
         @JvmField
         var kP = 0.02
+
+        @JvmField
+        var blockerOpen = 0.0
+        @JvmField
+        var blockerClose = 0.1
     }
     var targetVelocity = 0.0
     val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
 
+    val blockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
+
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
+    }
+
+    fun openBlocker() {
+        blockerServo.position =blockerOpen
+    }
+
+    fun closeBlocker() {
+        blockerServo.position =blockerClose
     }
 
     fun update() {
@@ -56,6 +72,12 @@ class ShooterTesting: LinearOpMode() {
             shooter.update()
             telemetry.addData("encoder speed", shooter.getEncoderSpeed())
             telemetry.update()
+            if (gamepad1.a) {
+                shooter.openBlocker()
+            }
+            else {
+                shooter.closeBlocker()
+            }
         }
     }
 }
