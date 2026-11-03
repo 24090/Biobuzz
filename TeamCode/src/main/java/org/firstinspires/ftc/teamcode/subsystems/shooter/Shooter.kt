@@ -24,10 +24,17 @@ class Shooter(hardwareMap: HardwareMap) {
         var blockerOpen = 0.0
         @JvmField
         var blockerClose = 0.1
+
+        @JvmField
+        var turretOffset = 0.0
+        @JvmField
+        var turretScale = 0.0
+
+
     }
     var targetVelocity = 0.0
     val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
-
+    val turretSurvo: Servo = hardwareMap.get(Servo::class.java, "rotateTurret")
     val blockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
 
     init {
@@ -40,6 +47,14 @@ class Shooter(hardwareMap: HardwareMap) {
 
     fun closeBlocker() {
         blockerServo.position =blockerClose
+    }
+
+    fun turretRotatePos1(angle: Double) {
+        turretSurvo.position = turretRotatePos1
+    }
+
+    fun turretRotatePos2(angle: Double) {
+        turretSurvo.position = turretRotatePos2
     }
 
     fun update() {
@@ -77,6 +92,10 @@ class ShooterTesting: LinearOpMode() {
             }
             else {
                 shooter.closeBlocker()
+            }
+
+            if (gamepad1.b) {
+                turretServo.turretRotatePos1()
             }
         }
     }
