@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.sysid.MotorSysID
+import kotlin.math.PI
 
 @Config
 class Shooter(hardwareMap: HardwareMap) {
@@ -50,12 +51,9 @@ class Shooter(hardwareMap: HardwareMap) {
     }
 
     fun turretRotatePos1(angle: Double) {
-        turretSurvo.position = turretRotatePos1
+        turretSurvo.position = (angle * turretScale + turretOffset + 10)%1
     }
 
-    fun turretRotatePos2(angle: Double) {
-        turretSurvo.position = turretRotatePos2
-    }
 
     fun update() {
         if (motor.velocity < targetVelocity){
@@ -95,7 +93,10 @@ class ShooterTesting: LinearOpMode() {
             }
 
             if (gamepad1.b) {
-                turretServo.turretRotatePos1()
+                shooter.turretRotatePos1(PI/2)
+            }
+            if (gamepad1.x) {
+                shooter.turretRotatePos1(3*PI/2)
             }
         }
     }
