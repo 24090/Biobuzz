@@ -41,6 +41,12 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         if (opmode.gamepad1.x) {
             shooter.setTurretPos(3*PI/2)
         }
+        if (opmode.gamepad1.a) {
+            shooter.openBlocker()
+        }
+        else {
+            shooter.closeBlocker()
+        }
 
         reads.update() // reads sensors
         drive.update() // updates the drivetrain subsystem
