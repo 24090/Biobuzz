@@ -4,6 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.opmodes.commands.RobotFunctionOpMode
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVectors.Companion.processTurnDriveStrafe
+import kotlin.math.PI
+import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
+import org.firstinspires.ftc.teamcode.subsystems.shooter.turretServo
+import org.firstinspires.ftc.teamcode.subsystems.shooter.Servo
+import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterTesting.Companion.TargetVelocity
+import com.qualcomm.robotcore.hardware.HardwareMap
 
 /**
  * This is an example implementation of a `RobotFunctionOpmode`
@@ -20,15 +26,24 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
             -opmode.gamepad1.left_stick_x.toDouble() * 1.6,
         )
     }
-
+    val shooter = Shooter(hardwareMap)
     opmode.waitForStart()
+    shooter.update()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
+        shooter.targetVelocity = TargetVelocity
+        shooter.update()
         if (opmode.gamepad1.x) {
             telemetry.addLine("x is pressed!")
             intake.isRunning = true
         } else {
             telemetry.addLine("x is not pressed :(")
             intake.isRunning = false
+        }
+        if (opmode.gamepad1.b) {
+            shooter.turretRotatePos1(PI/2)
+        }
+        if (opmode.gamepad1.x) {
+            shooter.turretRotatePos1(3*PI/2)
         }
 
         //reads.update() // reads sensors
@@ -37,4 +52,6 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         transfer.update()
         telemetry.update() // sends telemetry to the driver station
     }
+
+
 })
