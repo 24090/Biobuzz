@@ -39,14 +39,14 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         if (opmode.gamepad1.right_bumper) {
             shooter.setTurretPos(3*PI/2)
         }
-        if (opmode.gamepad1.a) {
-            shooter.openBlocker()
-        }
-        else {
-            shooter.closeBlocker()
-        }
         if (opmode.gamepad1.right_trigger > 0.5) {
             shooter.targetVelocity = 1500.0
+            if (shooter.motor.velocity > 1480.0){
+                shooter.openBlocker()
+            }
+            else {
+                shooter.closeBlocker()
+            }
         }
         else {
             shooter.targetVelocity = 0.0
