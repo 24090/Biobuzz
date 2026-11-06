@@ -50,6 +50,9 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         if (opmode.gamepad1.right_trigger > 0.5) {
             shooter.targetVelocity = 1300.0
         }
+        else {
+            shooter.targetVelocity = 0.0
+        }
 
         reads.update() // reads sensors
         drive.update() // updates the drivetrain subsystem
