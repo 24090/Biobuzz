@@ -28,17 +28,15 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         shooter.targetVelocity = TargetVelocity
         shooter.update()
-        if (opmode.gamepad1.x) {
-            telemetry.addLine("x is pressed!")
+        if (opmode.gamepad1.dpadUpWasPressed()) {
             intake.isRunning = true
-        } else {
-            telemetry.addLine("x is not pressed :(")
+        } else if (opmode.gamepad1.dpadDownWasPressed()) {
             intake.isRunning = false
         }
-        if (opmode.gamepad1.b) {
+        if (opmode.gamepad1.left_bumper) {
             shooter.setTurretPos(PI/2)
         }
-        if (opmode.gamepad1.x) {
+        if (opmode.gamepad1.right_bumper) {
             shooter.setTurretPos(3*PI/2)
         }
         if (opmode.gamepad1.a) {
@@ -48,7 +46,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
             shooter.closeBlocker()
         }
         if (opmode.gamepad1.right_trigger > 0.5) {
-            shooter.targetVelocity = 1300.0
+            shooter.targetVelocity = 1500.0
         }
         else {
             shooter.targetVelocity = 0.0

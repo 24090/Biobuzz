@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.shooter
 
+import android.util.Log
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
@@ -20,24 +21,24 @@ class Shooter(hardwareMap: HardwareMap) {
         var kP = 0.02
 
         @JvmField
-        var blockerOpen = 0.0
+        var blockerOpen = 0.4
         @JvmField
-        var blockerClose = 0.1
+        var blockerClose = 0.3
 
         @JvmField
-        var turretOffset = 0.0
+        var turretOffset = 0.053
         @JvmField
-        var turretScale = 5.0/6.0 * 2 * PI
+        var turretScale = 0.15
 
 
     }
     var targetVelocity = 0.0
     val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
-    val turretServo: Servo = hardwareMap.get(Servo::class.java, "rotateTurret")
+    val turretServo: Servo = hardwareMap.get(Servo::class.java, "pollenTurret")
     val blockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
 
     init {
-        motor.direction = DcMotorSimple.Direction.REVERSE
+        motor.direction = DcMotorSimple.Direction.FORWARD
     }
 
     fun openBlocker() {
@@ -49,7 +50,10 @@ class Shooter(hardwareMap: HardwareMap) {
     }
 
     fun setTurretPos(angle: Double) {
-        turretServo.position = ((angle * turretScale + turretOffset)%(2*PI/turretScale)+(2*PI/turretScale))%(2*PI/turretScale)
+        Log.i("angle",
+            (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)).toString()
+        )
+        turretServo.position = ((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)
     }
 
 
@@ -90,11 +94,13 @@ class ShooterTesting: LinearOpMode() {
                 shooter.closeBlocker()
             }
 
-            if (gamepad1.b) {
-                shooter.setTurretPos(PI/2)
-            }
             if (gamepad1.x) {
-                shooter.setTurretPos(3*PI/2)
+                shooter.setTurretPos(PI/2)
+
+            }else if (gamepad1.b) {
+                shooter.setTurretPos(-PI/2)
+            } else {
+                shooter.setTurretPos(0.0)
             }
         }
     }

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.utility
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.google.gson.annotations.Until
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.Utility
@@ -15,6 +17,7 @@ class FullShootTesting: LinearOpMode() {
         @JvmField var targetVelocity = 0.0
     }
     override fun runOpMode() {
+        val telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         val intake = Intake(hardwareMap)
         val transfer = Transfer(hardwareMap)
         val shooter = Shooter(hardwareMap)
@@ -25,6 +28,8 @@ class FullShootTesting: LinearOpMode() {
             transfer.update()
             shooter.update()
             shooter.targetVelocity = targetVelocity
+            telemetry.addData("shooter vel", shooter.motor.velocity)
+            telemetry.update()
         }
     }
 
