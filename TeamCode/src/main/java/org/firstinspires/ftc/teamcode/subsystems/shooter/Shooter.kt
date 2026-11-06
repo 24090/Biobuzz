@@ -9,8 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
-import org.firstinspires.ftc.teamcode.subsystems.controlsystems.sysid.MotorSysID
 import kotlin.math.PI
 
 @Config
@@ -29,13 +27,13 @@ class Shooter(hardwareMap: HardwareMap) {
         @JvmField
         var turretOffset = 0.0
         @JvmField
-        var turretScale = 0.0
+        var turretScale = 5.0/6.0 * 2 * PI
 
 
     }
     var targetVelocity = 0.0
     val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
-    val turretSurvo: Servo = hardwareMap.get(Servo::class.java, "rotateTurret")
+    val turretServo: Servo = hardwareMap.get(Servo::class.java, "rotateTurret")
     val blockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
 
     init {
@@ -50,8 +48,8 @@ class Shooter(hardwareMap: HardwareMap) {
         blockerServo.position =blockerClose
     }
 
-    fun turretRotatePos1(angle: Double) {
-        turretSurvo.position = (angle * turretScale + turretOffset + 10)%1
+    fun setTurretPos(angle: Double) {
+        turretServo.position = ((angle * turretScale + turretOffset)%(2*PI/turretScale)+(2*PI/turretScale))%(2*PI/turretScale)
     }
 
 
@@ -93,10 +91,10 @@ class ShooterTesting: LinearOpMode() {
             }
 
             if (gamepad1.b) {
-                shooter.turretRotatePos1(PI/2)
+                shooter.setTurretPos(PI/2)
             }
             if (gamepad1.x) {
-                shooter.turretRotatePos1(3*PI/2)
+                shooter.setTurretPos(3*PI/2)
             }
         }
     }
