@@ -62,11 +62,8 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         }
         if (opmode.gamepad1.right_trigger > 0.5) {
             shooter.targetVelocity = 1300.0
-            if (shooter.pollenMotor.velocity > 1240.0){
+            if (shooter.pollenMotor.velocity > 1280.0){
                 shooter.openPollenBlocker()
-            }
-            else {
-                shooter.closePollenBlocker()
             }
         } else {
             shooter.targetVelocity = 0.0
