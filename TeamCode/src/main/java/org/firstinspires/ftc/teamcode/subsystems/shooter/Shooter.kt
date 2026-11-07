@@ -21,9 +21,9 @@ class Shooter(hardwareMap: HardwareMap) {
         var kP = 0.02
 
         @JvmField
-        var blockerOpen = 0.4
+        var pollenBlockerOpen = 0.4
         @JvmField
-        var blockerClose = 0.3
+        var pollenBlockerClose = 0.3
 
         @JvmField
         var turretOffset = 0.053
@@ -33,41 +33,38 @@ class Shooter(hardwareMap: HardwareMap) {
 
     }
     var targetVelocity = 0.0
-    val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
-    val turretServo: Servo = hardwareMap.get(Servo::class.java, "pollenTurret")
-    val blockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
+    val pollenMotor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
+    val pollenTurretServo: Servo = hardwareMap.get(Servo::class.java, "pollenTurret")
+    val pollenBlockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
+
 
     init {
-        motor.direction = DcMotorSimple.Direction.FORWARD
+        pollenMotor.direction = DcMotorSimple.Direction.FORWARD
     }
 
-    fun openBlocker() {
-        blockerServo.position =blockerOpen
+    fun openPollenBlocker() {
+        pollenBlockerServo.position = pollenBlockerOpen
     }
 
-    fun closeBlocker() {
-        blockerServo.position =blockerClose
+    fun closePollenBlocker() {
+        pollenBlockerServo.position = pollenBlockerClose
     }
 
-    fun setTurretPos(angle: Double) {
+    fun setPollenTurretPos(angle: Double) {
         Log.i("angle",
             (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)).toString()
         )
-        turretServo.position = ((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)
+        pollenTurretServo.position = ((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)
     }
 
 
     fun update() {
-        if (motor.velocity < targetVelocity){
-            motor.power = (targetVelocity - motor.velocity)*kP + targetVelocity * kF
+        if (pollenMotor.velocity < targetVelocity){
+            pollenMotor.power = (targetVelocity - pollenMotor.velocity)*kP + targetVelocity * kF
         }
         else {
-            motor.power = 0.0
+            pollenMotor.power = 0.0
         }
-    }
-
-    fun getEncoderSpeed(): Double{
-        return motor.velocity
     }
 }
 
@@ -85,22 +82,22 @@ class ShooterTesting: LinearOpMode() {
         while (opModeIsActive()) {
             shooter.targetVelocity = TargetVelocity
             shooter.update()
-            telemetry.addData("encoder speed", shooter.getEncoderSpeed())
+            telemetry.addData("encoder speed", shooter.pollenMotor.velocity)
             telemetry.update()
             if (gamepad1.a) {
-                shooter.openBlocker()
+                shooter.openPollenBlocker()
             }
             else {
-                shooter.closeBlocker()
+                shooter.closePollenBlocker()
             }
 
             if (gamepad1.x) {
-                shooter.setTurretPos(PI/2)
+                shooter.setPollenTurretPos(PI/2)
 
             }else if (gamepad1.b) {
-                shooter.setTurretPos(-PI/2)
+                shooter.setPollenTurretPos(-PI/2)
             } else {
-                shooter.setTurretPos(0.0)
+                shooter.setPollenTurretPos(0.0)
             }
         }
     }

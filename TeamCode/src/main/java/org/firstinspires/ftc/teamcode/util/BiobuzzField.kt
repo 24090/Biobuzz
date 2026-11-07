@@ -8,4 +8,4 @@ val tileSize = fieldSize/6
 val halfField = fieldSize/2
 val fieldCenter = Vector.fromCartesian(0.0, 0.0)
 val blueDirection = Vector.fromCartesian(0.0, 1.0)
-val blueGardenDirection = Vector.fromCartesian(1.0, 0.0)
+val blueAudienceDirection = Vector.fromCartesian(1.0, 0.0)

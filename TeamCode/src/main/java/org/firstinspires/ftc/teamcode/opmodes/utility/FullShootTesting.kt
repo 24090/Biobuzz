@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes.utility
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.google.gson.annotations.Until
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.Utility
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake
@@ -28,7 +27,7 @@ class FullShootTesting: LinearOpMode() {
             transfer.update()
             shooter.update()
             shooter.targetVelocity = targetVelocity
-            telemetry.addData("shooter vel", shooter.motor.velocity)
+            telemetry.addData("shooter vel", shooter.pollenMotor.velocity)
             telemetry.update()
         }
     }
