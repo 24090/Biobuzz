@@ -5,10 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 
 class Intake(hardwareMap: HardwareMap) {
     var isRunning = false
-    val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "intake")
+    val motor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "intake"), cachingTolerance = 0.02)
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
     }

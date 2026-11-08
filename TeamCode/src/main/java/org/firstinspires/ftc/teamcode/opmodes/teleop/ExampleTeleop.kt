@@ -14,7 +14,9 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.getRelativeVeloci
 import kotlin.math.PI
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterTesting.Companion.TargetVelocity
+import org.firstinspires.ftc.teamcode.util.timeSeconds
 import java.util.Optional
+import kotlin.math.absoluteValue
 
 /**
  * This is an example implementation of a `RobotFunctionOpmode`
@@ -26,10 +28,12 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     // this tells the drivetrain to move each update according to the function below
     var headingLock: Optional<Double> = Optional.empty<Double>();
     drive.follow = {
-        if (opmode.gamepad1.right_stick_x.toDouble() == 0.0 && (drive.localizer.headingVel == 0.0)){
+        if (opmode.gamepad1.right_stick_x.toDouble() == 0.0 && (drive.localizer.headingVel.absoluteValue <= 0.05)){
             if (!headingLock.isPresent) {
                 headingLock = Optional.of(drive.localizer.heading)
             }
+        } else if (opmode.gamepad1.right_stick_x.toDouble() != 0.0) {
+            headingLock = Optional.empty()
         }
         processTurnDriveStrafe(
             if (!headingLock.isPresent) {
@@ -46,23 +50,22 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     val shooter = Shooter(opmode.hardwareMap)
     opmode.waitForStart()
     shooter.update()
+    var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         shooter.targetVelocity = TargetVelocity
-        shooter.update()
         if (opmode.gamepad1.dpadUpWasPressed()) {
             intake.isRunning = true
         } else if (opmode.gamepad1.dpadDownWasPressed()) {
             intake.isRunning = false
         }
         if (opmode.gamepad1.left_bumper) {
-            shooter.setPollenTurretPos(PI/2)
-        }
-        if (opmode.gamepad1.right_bumper) {
-            shooter.setPollenTurretPos(3*PI/2)
+            shooter.setPollenTurretPos(0.0)
+        } else if (opmode.gamepad1.right_bumper) {
+            shooter.setPollenTurretPos(PI)
         }
         if (opmode.gamepad1.right_trigger > 0.5) {
-            shooter.targetVelocity = 1300.0
-            if (shooter.pollenMotor.velocity > 1280.0){
+            shooter.targetVelocity = 1140.0
+            if (shooter.pollenMotor.velocity >= 1120.0){
                 shooter.openPollenBlocker()
             }
         } else {
@@ -75,6 +78,10 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         shooter.update()
         intake.update()
         transfer.update()
+
+        telemetry.addData("heading lock", headingLock)
+        telemetry.addData("loop time", ((timeSeconds() - timer)*1000).toInt())
+        timer = timeSeconds()
         telemetry.update() // sends telemetry to the driver station
     }
 

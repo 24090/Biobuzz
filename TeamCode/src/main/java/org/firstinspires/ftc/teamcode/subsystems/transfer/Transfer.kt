@@ -8,9 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 
 class Transfer(hardwareMap: HardwareMap) {
-    val motor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "transfer")
+    val motor: DcMotorEx = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "transfer"), cachingTolerance = 0.02)
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
     }

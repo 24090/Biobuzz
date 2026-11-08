@@ -10,33 +10,31 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 import kotlin.math.PI
 
 @Config
 class Shooter(hardwareMap: HardwareMap) {
     companion object {
         @JvmField
-        var kF = 0.0003
+        var kF = 0.00044
         @JvmField
-        var kP = 0.02
+        var kP = 0.012
 
         @JvmField
         var pollenBlockerOpen = 0.4
         @JvmField
-        var pollenBlockerClose = 0.3
+        var pollenBlockerClose = 0.26
 
         @JvmField
-        var turretOffset = 0.053
+        var turretOffset = 0.15
         @JvmField
-        var turretScale = 0.15
-
-
+        var turretScale = 0.1515
     }
     var targetVelocity = 0.0
-    val pollenMotor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "pollenShooter")
+    val pollenMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "pollenShooter"))
     val pollenTurretServo: Servo = hardwareMap.get(Servo::class.java, "pollenTurret")
     val pollenBlockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
-
 
     init {
         pollenMotor.direction = DcMotorSimple.Direction.FORWARD
@@ -54,9 +52,8 @@ class Shooter(hardwareMap: HardwareMap) {
         Log.i("angle",
             (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)).toString()
         )
-        pollenTurretServo.position = ((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)
+        pollenTurretServo.position = (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale))
     }
-
 
     fun update() {
         if (pollenMotor.velocity < targetVelocity){
