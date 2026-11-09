@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.hP
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.hS
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.hT
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVectors.Companion.processTurnDriveStrafe
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.TeleopFollower
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.getRelativePose
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.getRelativeVelocity
 import kotlin.math.PI
@@ -26,27 +27,8 @@ import kotlin.math.absoluteValue
 @TeleOp // tells the driver station to treat this opmode as a teleop opmode (as opposed to an autonomous)
 class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     // this tells the drivetrain to move each update according to the function below
-    var headingLock: Optional<Double> = Optional.empty<Double>();
-    drive.follow = {
-        if (opmode.gamepad1.right_stick_x.toDouble() == 0.0 && (drive.localizer.headingVel.absoluteValue <= 0.05)){
-            if (!headingLock.isPresent) {
-                headingLock = Optional.of(drive.localizer.heading)
-            }
-        } else if (opmode.gamepad1.right_stick_x.toDouble() != 0.0) {
-            headingLock = Optional.empty()
-        }
-        processTurnDriveStrafe(
-            if (!headingLock.isPresent) {
-                -opmode.gamepad1.right_stick_x.toDouble() * 1.6
-            } else {
-                val error = AngleUnit.normalizeRadians(headingLock.get() - drive.localizer.heading)
-                val dError = -drive.localizer.headingVel
-                PDLT(error, dError, hP, hD, hS, hT)
-            },
-            -opmode.gamepad1.left_stick_y.toDouble() * 1.6,
-            -opmode.gamepad1.left_stick_x.toDouble() * 1.6,
-        )
-    }
+    val follower = TeleopFollower(opmode.gamepad1, drive, red)
+    drive.follow = follower
     val shooter = Shooter(opmode.hardwareMap)
     opmode.waitForStart()
     shooter.update()
@@ -79,7 +61,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         intake.update()
         transfer.update()
 
-        telemetry.addData("heading lock", headingLock)
+        telemetry.addData("heading lock", follower.headingLock)
         telemetry.addData("loop time", ((timeSeconds() - timer)*1000).toInt())
         timer = timeSeconds()
         telemetry.update() // sends telemetry to the driver station
