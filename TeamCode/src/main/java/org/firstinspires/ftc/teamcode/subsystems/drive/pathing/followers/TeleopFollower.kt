@@ -34,7 +34,7 @@ class TeleopFollower(val gamepad: Gamepad, val drive: Drive, val red: Boolean = 
 
         return processTurnTranslational(
             if (!headingLock.isPresent) {
-                -gamepad.right_stick_x.toDouble().pow(2) * 1.6
+                -gamepad.right_stick_x.toDouble() * gamepad.right_stick_x.toDouble().absoluteValue * 1.6
             } else {
                 val error = AngleUnit.normalizeRadians(headingLock.get() - drive.localizer.heading)
                 val dError = -drive.localizer.headingVel
