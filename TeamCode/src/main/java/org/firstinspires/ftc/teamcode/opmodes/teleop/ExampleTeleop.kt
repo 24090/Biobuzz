@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.opmodes.commands.RobotFunctionOpMode
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.TeleopFollower
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
@@ -19,7 +20,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     val follower = TeleopFollower(opmode.gamepad1, red)
     drive.followFunction = follower.function
     opmode.waitForStart()
-    drive.localizer.pose = Pose(Pose2D(DistanceUnit.INCH, 64.65, 5.9, AngleUnit.RADIANS, 0.0))
+    drive.localizer.pose = Pose(64.65, 5.9, 0.0)
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         if (opmode.gamepad1.dpadUpWasPressed()) {
