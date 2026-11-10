@@ -38,10 +38,14 @@ class Shooter(hardwareMap: HardwareMap) {
     val pollenMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "pollenShooter"))
     val pollenTurretServo: Servo = hardwareMap.get(Servo::class.java, "pollenTurret")
     val pollenBlockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
+    val nectarMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "nectarShooter"))
+    val nectarTurretServo: Servo = hardwareMap.get(Servo::class.java, "nectarTurret")
+    val nectarBLockerServo: Servo = hardwareMap.get(Servo::class.java, "nectarBlocker")
     val localizer = Localizer(hardwareMap)
 
     init {
         pollenMotor.direction = DcMotorSimple.Direction.FORWARD
+        nectarMotor.direction = DcMotorSimple.Direction.REVERSE
     }
 
     fun getTurretArrow(position: Pose) = Vector.fromCartesian(57 - position.x, 57 - position.y).angle - position.heading
@@ -50,14 +54,20 @@ class Shooter(hardwareMap: HardwareMap) {
         setPollenTurretPos(getTurretArrow(localizer.pose))
     }
 
-
-
     fun openPollenBlocker() {
         pollenBlockerServo.position = pollenBlockerOpen
     }
 
+    fun openNectarBlocker() {
+        nectarBLockerServo.position =
+    }
+
     fun closePollenBlocker() {
         pollenBlockerServo.position = pollenBlockerClose
+    }
+
+    fun closeNectarBlocker() {
+        nectarBLockerServo.position =
     }
 
     fun setPollenTurretPos(angle: Double) {
@@ -67,12 +77,22 @@ class Shooter(hardwareMap: HardwareMap) {
         pollenTurretServo.position = (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale))
     }
 
+    fun setNectarTurretPos(angle: Double) {
+        Log.i("angle",
+            (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)).toString()
+        )
+        nectarTurretServo.position = (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale))
+    }
+
     fun update() {
         if (pollenMotor.velocity < targetVelocity){
             pollenMotor.power = (targetVelocity - pollenMotor.velocity)*kP + targetVelocity * kF
         }
         else {
             pollenMotor.power = 0.0
+        }
+        if (nectarMotor.velocity < targetVelocity){
+            nectarMotor.power = (targetVelocity - nectarMotor.velocity)
         }
     }
 }
@@ -99,6 +119,12 @@ class ShooterTesting: LinearOpMode() {
             else {
                 shooter.closePollenBlocker()
             }
+            if (gamepad1.y) {
+                shooter.openNectarBlocker()
+            }
+            else {
+                shooter.closeNectarBlocker()
+            }
 
             if (gamepad1.x) {
                 shooter.setPollenTurretPos(PI/2)
@@ -107,6 +133,13 @@ class ShooterTesting: LinearOpMode() {
                 shooter.setPollenTurretPos(-PI/2)
             } else {
                 shooter.setPollenTurretPos(0.0)
+            }
+            if (gamepad1.dpad_down) {
+                shooter.setNectarTurretPos(PI/2)
+            } else if (gamepad1.dpad_up) {
+                shooter.setNectarTurretPos(-PI/2)
+            } else {
+                shooter.setNectarTurretPos(0.0)
             }
         }
     }
