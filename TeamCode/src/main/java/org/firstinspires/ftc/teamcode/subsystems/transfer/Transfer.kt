@@ -10,13 +10,28 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 
+enum class TransferMode{
+    Stopped,
+    HalfPower,
+    FullPower
+}
+
 class Transfer(hardwareMap: HardwareMap) {
+
+    var mode: TransferMode = TransferMode.Stopped
     val motor: DcMotorEx = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "transfer"), cachingTolerance = 0.02)
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
     }
     fun update(){
-        motor.power = 1.0
+        when(mode){
+            TransferMode.Stopped ->
+                motor.power = 0.0
+            TransferMode.HalfPower ->
+                motor.power = 0.5
+            TransferMode.FullPower ->
+                motor.power = 1.0
+        }
     }
 }
 

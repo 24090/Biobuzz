@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeMode
+import org.firstinspires.ftc.teamcode.subsystems.intake.TransferMode
 import org.firstinspires.ftc.teamcode.util.timeSeconds
 import kotlin.math.PI
 
@@ -36,6 +37,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
             shooter.setPollenTurretPos(PI)
         }
         if (opmode.gamepad1.right_trigger > 0.5) {
+            transfer.mode = TransferMode.FullPower
             shooter.targetVelocity = 1140.0
             if (shooter.pollenMotor.velocity >= 1120.0){
                 shooter.openPollenBlocker()
@@ -43,6 +45,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         } else {
             shooter.targetVelocity = 0.0
             shooter.closePollenBlocker()
+            transfer.mode = TransferMode.HalfPower
         }
 
         reads.update() // reads sensors
