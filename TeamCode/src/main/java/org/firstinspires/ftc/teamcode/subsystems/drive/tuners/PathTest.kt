@@ -34,7 +34,6 @@ class PathTest: LinearOpMode() {
                 Pose(36.0, 72.0, PI/2),
                 Pose(0.0, 80.0, 0.0)
             ),
-            drive.localizer
         )
         reads.update()
         telemetry.addLine("x ${drive.localizer.x}")
@@ -46,7 +45,7 @@ class PathTest: LinearOpMode() {
             reads.update()
             recordTime("reads")
 
-            val driveVectors = drive.followFunction()
+            val driveVectors = drive.followFunction(drive)
             val leftPowers = driveVectors.getLeftPowers()
             val rightPowers = driveVectors.getRightPowers()
 

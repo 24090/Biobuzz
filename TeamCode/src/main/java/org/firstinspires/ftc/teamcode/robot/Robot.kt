@@ -8,11 +8,13 @@ import org.firstinspires.ftc.teamcode.commands.Command
 import org.firstinspires.ftc.teamcode.commands.runBlocking
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Vector
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake
 import org.firstinspires.ftc.teamcode.subsystems.intake.Transfer
 import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
 import org.firstinspires.ftc.teamcode.util.Reference
+import org.firstinspires.ftc.teamcode.util.startPoseShooting
 import org.firstinspires.ftc.teamcode.util.storedRed
 
 open class Robot(opMode: OpMode) {
@@ -35,6 +37,12 @@ open class Robot(opMode: OpMode) {
         telemetry.addData("$name (ms)", newTime - time)
         time = newTime
     }
+
+    fun trackHive() {
+        val pollenPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading)
+        val angle = (-Vector.fromCartesian(57.8 - drive.localizer.x, 46.0 - drive.localizer.y)).angle - drive.localizer.heading
+        shooter.setPollenTurretPos(angle)
+    }
 }
 
 /**
@@ -47,12 +55,13 @@ open class AutoOpMode(val red: Boolean, val startPose: Pose, val command: Robot.
     storedRed = Reference(red)
     val robot = Robot(opmode)
     val command = robot.command()
-    while (opmode.opModeInInit()){
-        telemetry.update()
-    }
+    robot.drive.localizer.pose = startPose.mirroredIf(!storedRed.get())
+    telemetry.addData("pose", robot.drive.localizer.pose)
+    telemetry.addData("pose", startPoseShooting)
+    telemetry.addData("pose", startPose)
 
-    robot.drive.localizer.pose = startPose.mirroredIf(storedRed.get())
 
+    telemetry.update()
     opmode.waitForStart()
 
     if (opmode.opModeIsActive()){

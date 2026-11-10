@@ -12,11 +12,12 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVectors.Companion.pr
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
 import org.firstinspires.ftc.teamcode.util.robotWidth
+import org.firstinspires.ftc.teamcode.util.startPoseShooting
 import kotlin.math.PI
 
 
 @Disabled
-class FirstAuto (red: Boolean): AutoOpMode(red, Pose(48.0 + robotWidth/2.0, 8.773224043715848, Math.toRadians(90.0)), { Race(
+open class FirstAuto (red: Boolean): AutoOpMode(red, startPoseShooting, { Race(
 //gotocircle means that it will go to a certain area. NOT the name of the path
     Sequence( // tells the drivetrain to go to these points in order
         //shooter.start(),
@@ -42,4 +43,4 @@ class FirstAuto (red: Boolean): AutoOpMode(red, Pose(48.0 + robotWidth/2.0, 8.77
 )})// this is just for learning purposes and is not final
 
 @Autonomous
-class FirstAutoRed: ExampleAutoOpMode(red = true) // creates the opmode above for red alliance
+class FirstAutoRed: FirstAuto(red = true) // creates the opmode above for red alliance

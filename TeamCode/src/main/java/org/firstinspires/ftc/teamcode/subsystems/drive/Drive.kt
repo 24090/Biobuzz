@@ -71,6 +71,7 @@ class Drive(hardwareMap: HardwareMap) {
     // Drive math, etc
 
     var followFunction: Drive.() -> DriveVectors = getPointToPoint(Reference(Pose(0.0, 0.0, 0.0)))
+
     var driveVectors = DriveVectors.fromRotation(0.0)
     fun startP2PWithTargetPose(targetPose: Pose) {
         followFunction = getPointToPoint(Reference(targetPose))

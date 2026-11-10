@@ -20,7 +20,6 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     val follower = TeleopFollower(opmode.gamepad1, red)
     drive.followFunction = follower.function
     opmode.waitForStart()
-    drive.localizer.pose = Pose(64.65, 5.9, 0.0)
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         if (opmode.gamepad1.dpadUpWasPressed()) {
@@ -51,10 +50,12 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         reads.update() // reads sensors
         drive.update() // updates the drivetrain subsystem
         shooter.update()
-        shooter.trackHive()
+        trackHive()
         intake.update()
         transfer.update()
 
+        telemetry.addData("pose", drive.localizer.pose)
+        telemetry.addLine("test")
         telemetry.addData("heading lock", follower.headingLock)
         telemetry.addData("loop time", ((timeSeconds() - timer)*1000).toInt())
         timer = timeSeconds()
