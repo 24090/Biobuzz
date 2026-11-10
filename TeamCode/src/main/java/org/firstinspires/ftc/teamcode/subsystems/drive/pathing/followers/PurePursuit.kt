@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers
 
+import org.firstinspires.ftc.teamcode.subsystems.drive.Drive
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.kA
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.kS
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.kV
@@ -22,31 +23,31 @@ sealed class HeadingBehaviour{
     object Interpolate: HeadingBehaviour()
 }
 
-fun getPurePursuit(path: PurePursuitPath, localizer: Localizer): () -> DriveVectors{
+fun getPurePursuit(path: PurePursuitPath): Drive.() -> DriveVectors{
     return {
-        purePursuit(path, localizer.pose, localizer.poseVel)
+        purePursuit(path, localizer)
     }
 }
 
-fun purePursuit(path: PurePursuitPath, pose: Pose, velocity: Pose): DriveVectors{
-    val followPoint = path.getFollowPose(pose.vector(), 48.0)
-    return pointToPoint(pose, velocity, followPoint)
+fun purePursuit(path: PurePursuitPath, localizer: Localizer): DriveVectors{
+    val followPoint = path.getFollowPose(localizer.pose.vector(), 48.0)
+    return pointToPoint(followPoint, localizer)
 }
 
-fun getFollowCurve(curve: BezierCurve, localizer: Localizer) = { followCurve(curve, localizer.pose, localizer.poseVel) }
-fun followCurve(curve: BezierCurve, pose: Pose, velocity: Pose): DriveVectors{
+fun getFollowCurve(curve: BezierCurve): Drive.() -> DriveVectors = { followCurve(curve, localizer) }
+fun followCurve(curve: BezierCurve, localizer: Localizer): DriveVectors{
     // 1. corrective position/heading
     // 2. static friction feedforward
     // 3. accelvelstuff
 
-    val t = curve.closestT(pose.vector())
+    val t = curve.closestT(localizer.pose.vector())
     println(t)
     val curvePose = curve.getPose(t)
     val curveVelocity = curve.getVelocity(t).vector()
     val curveAccel = curve.getAcceleration(t).vector()
-    val corrective = pointToPoint(pose, velocity, curvePose, false)
+    val corrective = pointToPoint(curvePose, localizer, false)
     val static = curveVelocity.normalized() * (kS + 0.4)
-    val goodVelocityLength = max((velocity.vector() dot curveVelocity.norm()), 0.0)
+    val goodVelocityLength = max((localizer.poseVel.vector() dot curveVelocity.norm()), 0.0)
     val accelvel = (Vector.fromPolar(
         angle = curveAccel.angle,
         length = goodVelocityLength * (curveAccel.length / curveVelocity.length.let { if (it == 0.0) 0.001 else it} )
@@ -57,10 +58,4 @@ fun followCurve(curve: BezierCurve, pose: Pose, velocity: Pose): DriveVectors{
 
     return corrective
         .addWithoutPriority(getTranslationalVectors(static.x, static.y), controlHubVoltage / 14.0)
-        .driveAccelCorrected(
-            tipAccelBackward, tipAccelForward,
-            kS, kV, kA,
-            getRelativeVelocity(pose, velocity).x
-        )
-
 }

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake
 import org.firstinspires.ftc.teamcode.subsystems.intake.Transfer
 import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
+import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
 import org.firstinspires.ftc.teamcode.util.Reference
 import org.firstinspires.ftc.teamcode.util.storedRed
 
@@ -22,6 +23,7 @@ open class Robot(opMode: OpMode) {
     val telemetry = MultipleTelemetry(opMode.telemetry, FtcDashboard.getInstance().telemetry)
 
     val reads = Reads(opMode.hardwareMap)
+    val shooter = Shooter(opMode.hardwareMap)
     val drive = Drive(opMode.hardwareMap)
     val intake = Intake(opMode.hardwareMap)
     val transfer = Transfer(opMode.hardwareMap)

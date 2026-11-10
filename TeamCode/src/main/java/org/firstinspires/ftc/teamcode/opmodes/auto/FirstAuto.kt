@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.opmodes.commands.AutoOpMode
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVectors.Companion.processTurnDriveStrafe
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
+import org.firstinspires.ftc.teamcode.util.robotWidth
 import kotlin.math.PI
 
 
 @Disabled
-@Autonomous
-class FirstAuto (red: Boolean): AutoOpMode(red, Pose(59.350637522768665, 8.773224043715848, Math.toRadians(90.0)), { Race(
+class FirstAuto (red: Boolean): AutoOpMode(red, Pose(48.0 + robotWidth/2.0, 8.773224043715848, Math.toRadians(90.0)), { Race(
 //gotocircle means that it will go to a certain area. NOT the name of the path
     Sequence( // tells the drivetrain to go to these points in order
         //shooter.start(),
@@ -41,4 +41,5 @@ class FirstAuto (red: Boolean): AutoOpMode(red, Pose(59.350637522768665, 8.77322
     }// obv this is all just speculation. i dont know if theres going to be a method for collecting flowers, if its going to be a turret etc.
 )})// this is just for learning purposes and is not final
 
+@Autonomous
 class FirstAutoRed: ExampleAutoOpMode(red = true) // creates the opmode above for red alliance

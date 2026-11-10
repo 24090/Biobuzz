@@ -37,7 +37,7 @@ class kATuner: LinearOpMode() {
         telemetry.update()
         waitForStart()
         drive.localizer.pose = Pose(0.0, 0.0, 0.0)
-        drive.follow = {
+        drive.followFunction = {
             getTranslationalVectors(power, 0.0)
         }
         drive.update()

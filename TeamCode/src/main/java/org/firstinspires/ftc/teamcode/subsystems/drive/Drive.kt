@@ -70,14 +70,14 @@ class Drive(hardwareMap: HardwareMap) {
     }
     // Drive math, etc
 
-    var follow: () -> DriveVectors = getPointToPoint(Reference(Pose(0.0, 0.0, 0.0)), localizer)
+    var followFunction: Drive.() -> DriveVectors = getPointToPoint(Reference(Pose(0.0, 0.0, 0.0)))
     var driveVectors = DriveVectors.fromRotation(0.0)
     fun startP2PWithTargetPose(targetPose: Pose) {
-        follow = getPointToPoint(Reference(targetPose), localizer)
+        followFunction = getPointToPoint(Reference(targetPose))
     }
 
     fun update() {
-        driveVectors = follow()
+        driveVectors = followFunction()
         val leftPowers = driveVectors.getLeftPowers()
         val rightPowers = driveVectors.getRightPowers()
 
@@ -89,7 +89,7 @@ class Drive(hardwareMap: HardwareMap) {
 
     fun followPath(path: PurePursuitPath, distanceTolerance: Double = xyT * 4, headingTolerance: Double = hT * 4)=
         Sequence (
-            Instant {follow = getPurePursuit(path, localizer)},
+            Instant {followFunction = getPurePursuit(path)},
             WaitUntil{(path.t >= path.lines.size.toDouble() -0.1) && localizer.pose.inCircle(path.poses.last(), distanceTolerance, headingTolerance)}
         )
 
@@ -238,4 +238,9 @@ data class DriveVectors(val left: Vector, val right: Vector) {
     }
 
     override fun toString() = "[L $left, R $right]"
+    override fun hashCode(): Int {
+        var result = left.hashCode()
+        result = 31 * result + right.hashCode()
+        return result
+    }
 }

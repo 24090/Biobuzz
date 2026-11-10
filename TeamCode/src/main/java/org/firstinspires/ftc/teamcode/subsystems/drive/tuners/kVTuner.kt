@@ -36,7 +36,7 @@ class kVTuner: LinearOpMode() {
         drive.localizer.pose = Pose(0.0, 0.0, 0.0)
 
         var power = kS + velPower
-        drive.follow = {
+        drive.followFunction = {
             getTranslationalVectors(power, 0.0)
         }
         drive.update()

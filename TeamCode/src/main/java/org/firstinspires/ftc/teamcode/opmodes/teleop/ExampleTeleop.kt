@@ -1,40 +1,23 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.opmodes.commands.RobotFunctionOpMode
-import org.firstinspires.ftc.teamcode.subsystems.controlsystems.PDLT
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.hD
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.hP
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.hS
-import org.firstinspires.ftc.teamcode.subsystems.drive.Drive.DriveConstants.hT
-import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVectors.Companion.processTurnDriveStrafe
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.TeleopFollower
-import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.getRelativePose
-import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.getRelativeVelocity
-import kotlin.math.PI
-import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
-import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterTesting.Companion.TargetVelocity
 import org.firstinspires.ftc.teamcode.util.timeSeconds
-import java.util.Optional
-import kotlin.math.absoluteValue
+import kotlin.math.PI
 
 /**
  * This is an example implementation of a `RobotFunctionOpmode`
  * @see RobotFunctionOpMode
  * **/
- // tells the driver station to ignore this opmode (it's only here as an example)
 @TeleOp // tells the driver station to treat this opmode as a teleop opmode (as opposed to an autonomous)
 class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     // this tells the drivetrain to move each update according to the function below
-    val follower = TeleopFollower(opmode.gamepad1, drive, red)
-    drive.follow = follower
-    val shooter = Shooter(opmode.hardwareMap)
+    val follower = TeleopFollower(opmode.gamepad1, red)
+    drive.followFunction = follower.function
     opmode.waitForStart()
-    shooter.update()
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
-        shooter.targetVelocity = TargetVelocity
         if (opmode.gamepad1.dpadUpWasPressed()) {
             intake.isRunning = true
         } else if (opmode.gamepad1.dpadDownWasPressed()) {
@@ -66,6 +49,4 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         timer = timeSeconds()
         telemetry.update() // sends telemetry to the driver station
     }
-
-
 })

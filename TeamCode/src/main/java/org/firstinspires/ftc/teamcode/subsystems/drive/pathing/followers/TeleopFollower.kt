@@ -15,13 +15,13 @@ import java.util.Optional
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 
-class TeleopFollower(val gamepad: Gamepad, val drive: Drive, val red: Boolean = true): () -> DriveVectors{
+class TeleopFollower(val gamepad: Gamepad, val red: Boolean = true) {
     var headingLock: Optional<Double> = Optional.empty<Double>();
 
-    override fun invoke(): DriveVectors {
-        if (gamepad.right_stick_x.toDouble() == 0.0 && (drive.localizer.headingVel.absoluteValue <= 0.05)){
+    val function: Drive.() -> DriveVectors = {
+        if (gamepad.right_stick_x.toDouble() == 0.0 && (localizer.headingVel.absoluteValue <= 0.05)){
             if (!headingLock.isPresent) {
-                headingLock = Optional.of(drive.localizer.heading)
+                headingLock = Optional.of(localizer.heading)
             }
         } else if (gamepad.right_stick_x.toDouble() != 0.0) {
             headingLock = Optional.empty()
@@ -32,15 +32,15 @@ class TeleopFollower(val gamepad: Gamepad, val drive: Drive, val red: Boolean = 
             headingLock = Optional.of(leftStick.angle)
         }
 
-        return processTurnTranslational(
+        processTurnTranslational(
             if (!headingLock.isPresent) {
                 -gamepad.right_stick_x.toDouble() * gamepad.right_stick_x.toDouble().absoluteValue * 1.6
             } else {
-                val error = AngleUnit.normalizeRadians(headingLock.get() - drive.localizer.heading)
-                val dError = -drive.localizer.headingVel
+                val error = AngleUnit.normalizeRadians(headingLock.get() - localizer.heading)
+                val dError = -localizer.headingVel
                 PDLT(error, dError, hP, hD, hS, hT)
             },
-            leftStick.rotated(-drive.localizer.heading) * 1.6
+            leftStick.rotated(-localizer.heading) * 1.6
         )
     }
 }

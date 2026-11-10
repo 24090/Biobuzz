@@ -27,7 +27,7 @@ class PathTest: LinearOpMode() {
         val drive = Drive(hardwareMap)
         val reads = Reads(hardwareMap)
         drive.localizer.pose = Pose(72.0, 20.0, PI/4)
-        drive.follow = getFollowCurve(
+        drive.followFunction = getFollowCurve(
             CubicHermiteSpline(
                 Pose(72.0, 20.0, PI/4),
                 Pose(-10.0, 0.0, 3.0),
@@ -46,7 +46,7 @@ class PathTest: LinearOpMode() {
             reads.update()
             recordTime("reads")
 
-            val driveVectors = drive.follow()
+            val driveVectors = drive.followFunction()
             val leftPowers = driveVectors.getLeftPowers()
             val rightPowers = driveVectors.getRightPowers()
 
