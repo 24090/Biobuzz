@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.subsystems.drive.Localizer
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Vector
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 import kotlin.math.PI
 
@@ -35,10 +38,19 @@ class Shooter(hardwareMap: HardwareMap) {
     val pollenMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "pollenShooter"))
     val pollenTurretServo: Servo = hardwareMap.get(Servo::class.java, "pollenTurret")
     val pollenBlockerServo: Servo =hardwareMap.get(Servo::class.java, "pollenBlocker")
+    val localizer = Localizer(hardwareMap)
 
     init {
         pollenMotor.direction = DcMotorSimple.Direction.FORWARD
     }
+
+    fun getTurretArrow(position: Pose) = Vector.fromCartesian(57 - position.x, 57 - position.y).angle - position.heading
+
+    fun trackHive() {
+        setPollenTurretPos(getTurretArrow(localizer.pose))
+    }
+
+
 
     fun openPollenBlocker() {
         pollenBlockerServo.position = pollenBlockerOpen

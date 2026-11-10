@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.opmodes.commands.RobotFunctionOpMode
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.TeleopFollower
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.util.timeSeconds
 import kotlin.math.PI
 
@@ -16,12 +19,18 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     val follower = TeleopFollower(opmode.gamepad1, red)
     drive.followFunction = follower.function
     opmode.waitForStart()
+    drive.localizer.pose = Pose(Pose2D(DistanceUnit.INCH, 64.65, 5.9, AngleUnit.RADIANS, 0.0))
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         if (opmode.gamepad1.dpadUpWasPressed()) {
             intake.isRunning = true
         } else if (opmode.gamepad1.dpadDownWasPressed()) {
             intake.isRunning = false
+        }
+        if (opmode.gamepad1.dpadLeftWasPressed()){
+            intake.isRunningBack = true
+        } else if (opmode.gamepad1.dpadRightWasPressed()) {
+            intake.isRunningBack = false
         }
         if (opmode.gamepad1.left_bumper) {
             shooter.setPollenTurretPos(0.0)
@@ -41,6 +50,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         reads.update() // reads sensors
         drive.update() // updates the drivetrain subsystem
         shooter.update()
+        shooter.trackHive()
         intake.update()
         transfer.update()
 

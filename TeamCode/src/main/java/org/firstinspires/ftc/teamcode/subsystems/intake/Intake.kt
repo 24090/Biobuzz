@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensat
 
 class Intake(hardwareMap: HardwareMap) {
     var isRunning = false
+    var isRunningBack = false
     val motor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "intake"), cachingTolerance = 0.02)
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
@@ -17,6 +18,12 @@ class Intake(hardwareMap: HardwareMap) {
         if (isRunning) {
             motor.power = (800 - motor.velocity) * 0.0008 + 0.35
         } else {
+            motor.power = 0.0
+        }
+        if (isRunningBack) {
+            motor.power = (-800 - motor.velocity) * 0.0008 + 0.35
+        }
+        else {
             motor.power = 0.0
         }
     }
