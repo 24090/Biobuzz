@@ -7,24 +7,25 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 
+enum class IntakeMode{
+    Stopped,
+    Running,
+    Reverse
+}
 class Intake(hardwareMap: HardwareMap) {
-    var isRunning = false
-    var isRunningBack = false
+    var mode: IntakeMode = IntakeMode.Stopped
     val motor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "intake"), cachingTolerance = 0.02)
     init {
         motor.direction = DcMotorSimple.Direction.REVERSE
     }
     fun update(){
-        if (isRunning) {
-            motor.power = (800 - motor.velocity) * 0.0008 + 0.35
-        } else {
-            motor.power = 0.0
-        }
-        if (isRunningBack) {
-            motor.power = (-800 - motor.velocity) * 0.0008 + 0.35
-        }
-        else {
-            motor.power = 0.0
+        when(mode) {
+            IntakeMode.Stopped ->
+                motor.power = (0 - motor.velocity) * 0.0008 + 0.35
+            IntakeMode.Running ->
+                motor.power = (800 - motor.velocity) * 0.0008 + 0.35
+            IntakeMode.Reverse ->
+                motor.power = (-800 - motor.velocity) * 0.0008 + 0.35
         }
     }
 }
@@ -34,7 +35,7 @@ class IntakeTesting(): LinearOpMode() {
     override fun runOpMode() {
         // initialisation
         val intake = Intake(hardwareMap)
-        intake.isRunning = true
+        intake.mode = IntakeMode.Running
         waitForStart()
         // running
         while (opModeIsActive()){

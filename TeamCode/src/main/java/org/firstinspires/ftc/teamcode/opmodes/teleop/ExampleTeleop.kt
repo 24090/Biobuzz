@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.TeleopF
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
+import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeMode
 import org.firstinspires.ftc.teamcode.util.timeSeconds
 import kotlin.math.PI
 
@@ -23,14 +24,11 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         if (opmode.gamepad1.dpadUpWasPressed()) {
-            intake.isRunning = true
+            intake.mode = IntakeMode.Running
         } else if (opmode.gamepad1.dpadDownWasPressed()) {
-            intake.isRunning = false
-        }
-        if (opmode.gamepad1.dpadLeftWasPressed()){
-            intake.isRunningBack = true
-        } else if (opmode.gamepad1.dpadRightWasPressed()) {
-            intake.isRunningBack = false
+            intake.mode = IntakeMode.Stopped
+        } else if (opmode.gamepad1.dpadLeftWasPressed()){
+            intake.mode = IntakeMode.Reverse
         }
         if (opmode.gamepad1.left_bumper) {
             shooter.setPollenTurretPos(0.0)
