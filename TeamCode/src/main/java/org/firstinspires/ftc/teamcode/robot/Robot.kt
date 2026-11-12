@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.teamcode.commands.Command
+import org.firstinspires.ftc.teamcode.commands.Sleep
 import org.firstinspires.ftc.teamcode.commands.runBlocking
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
 import org.firstinspires.ftc.teamcode.util.Reference
 import org.firstinspires.ftc.teamcode.util.startPoseShooting
 import org.firstinspires.ftc.teamcode.util.storedRed
+import kotlin.math.PI
 
 open class Robot(opMode: OpMode) {
     var red
@@ -39,9 +41,18 @@ open class Robot(opMode: OpMode) {
     }
 
     fun trackHive() {
-        val pollenPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading)
-        val angle = (-Vector.fromCartesian(57.8 - drive.localizer.x, 46.0 - drive.localizer.y)).angle - drive.localizer.heading
-        shooter.setPollenTurretPos(angle)
+        val hivePosition = if (drive.localizer.pose.y < 70.75) {
+            Vector.fromCartesian(57.8, 48.0)
+        } else {
+            Vector.fromCartesian(57.8, 93.5)
+        }
+        val nectarPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading)
+        val pollenPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading)
+        val pollenAngle = ((hivePosition - pollenPosition).angle) - drive.localizer.heading
+        val nectarAngle = ((hivePosition - nectarPosition).angle) - drive.localizer.heading
+        shooter.setPollenTurretPos(pollenAngle)
+        shooter.setNectarTurretPos(nectarAngle)
+
     }
 }
 
@@ -56,12 +67,8 @@ open class AutoOpMode(val red: Boolean, val startPose: Pose, val command: Robot.
     val robot = Robot(opmode)
     val command = robot.command()
     robot.drive.localizer.pose = startPose.mirroredIf(!storedRed.get())
-    telemetry.addData("pose", robot.drive.localizer.pose)
-    telemetry.addData("pose", startPoseShooting)
-    telemetry.addData("pose", startPose)
-
-
-    telemetry.update()
+    opmode.sleep(300)
+    robot.trackHive()
     opmode.waitForStart()
 
     if (opmode.opModeIsActive()){

@@ -36,11 +36,11 @@ class Shooter(hardwareMap: HardwareMap) {
 
 
         @JvmField
-        var turretOffsetNectar = 0.15
+        var turretOffsetNectar = 0.1
         @JvmField
-        var turretOffsetPollen = 0.15
+        var turretOffsetPollen = 0.854
         @JvmField
-        var turretScale = 0.1515
+        var turretScale = 0.151
     }
     var targetVelocity = 0.0
     val pollenMotor = VoltageCompensatedMotor(hardwareMap.get(DcMotorEx::class.java, "pollenShooter"))
@@ -81,15 +81,8 @@ class Shooter(hardwareMap: HardwareMap) {
     }
 
     fun update() {
-        if (pollenMotor.velocity < targetVelocity){
-            pollenMotor.power = (targetVelocity - pollenMotor.velocity)*kP + targetVelocity * kF
-        }
-        else {
-            pollenMotor.power = 0.0
-        }
-        if (nectarMotor.velocity < targetVelocity){
-            nectarMotor.power = (targetVelocity - nectarMotor.velocity)
-        }
+        pollenMotor.power = (targetVelocity - pollenMotor.velocity)*kP + targetVelocity * kF
+//      nectarMotor.power = (targetVelocity - nectarMotor.velocity)*kP + targetVelocity * kF
     }
 }
 

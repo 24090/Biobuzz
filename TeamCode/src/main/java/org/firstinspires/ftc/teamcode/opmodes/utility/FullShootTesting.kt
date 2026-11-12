@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.Utility
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake
+import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeMode
 import org.firstinspires.ftc.teamcode.subsystems.intake.Transfer
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
 
@@ -20,7 +21,7 @@ class FullShootTesting: LinearOpMode() {
         val intake = Intake(hardwareMap)
         val transfer = Transfer(hardwareMap)
         val shooter = Shooter(hardwareMap)
-        intake.isRunning = true
+        intake.mode = IntakeMode.Running
         waitForStart()
         while (opModeIsActive()){
             intake.update()
