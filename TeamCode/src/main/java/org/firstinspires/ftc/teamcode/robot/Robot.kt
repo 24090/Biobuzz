@@ -40,11 +40,27 @@ open class Robot(opMode: OpMode) {
         time = newTime
     }
 
+    fun setTargetVelocitiesFromDistance() {
+        val hivePosition = if (drive.localizer.pose.y < 70.75) {
+            Vector.fromCartesian(57.8, 49.0)
+        } else {
+            Vector.fromCartesian(57.8, 92.5)
+        }
+        val nectarPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading)
+        val pollenPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading)
+
+        shooter.setTargetVelocities(
+            shooter.velocityFromDistance((hivePosition - pollenPosition).length),
+            shooter.velocityFromDistance((hivePosition - nectarPosition).length) + 140.0
+        )
+
+    }
+
     fun trackHive() {
         val hivePosition = if (drive.localizer.pose.y < 70.75) {
-            Vector.fromCartesian(57.8, 48.0)
+            Vector.fromCartesian(57.8, 49.0)
         } else {
-            Vector.fromCartesian(57.8, 93.5)
+            Vector.fromCartesian(57.8, 92.5)
         }
         val nectarPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading)
         val pollenPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading)
