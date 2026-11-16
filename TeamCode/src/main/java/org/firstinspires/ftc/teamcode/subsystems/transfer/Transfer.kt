@@ -28,7 +28,7 @@ class Transfer(hardwareMap: HardwareMap) {
             TransferMode.Stopped ->
                 motor.power = 0.0
             TransferMode.HalfPower ->
-                motor.power = 0.5
+                motor.power = 0.4
             TransferMode.FullPower ->
                 motor.power = 1.0
         }

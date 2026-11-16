@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
+import org.firstinspires.ftc.teamcode.util.clamp
 
 enum class IntakeMode{
     Stopped,
@@ -23,7 +24,7 @@ class Intake(hardwareMap: HardwareMap) {
             IntakeMode.Stopped ->
                 motor.power = (0 - motor.velocity) * 0.0008
             IntakeMode.Running ->
-                motor.power = (800 - motor.velocity) * 0.0008 + 0.35
+                motor.power = clamp((800 - motor.velocity) * 0.0008 + 0.35, -0.75, 0.75)
             IntakeMode.Reverse ->
                 motor.power = (-800 - motor.velocity) * 0.0008 - 0.35
         }

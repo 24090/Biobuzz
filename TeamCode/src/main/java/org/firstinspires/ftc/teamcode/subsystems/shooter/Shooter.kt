@@ -9,8 +9,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.opmodes.commands.Robot
 import org.firstinspires.ftc.teamcode.subsystems.drive.Localizer
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
+import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter.Companion.velocityFromDistance
 import org.firstinspires.ftc.teamcode.util.Polynomial
 import kotlin.math.PI
 
@@ -18,7 +20,7 @@ import kotlin.math.PI
 class Shooter(hardwareMap: HardwareMap) {
     companion object {
         @JvmField
-        var kF = 0.00044
+        var kF = 0.00033
         @JvmField
         var kP = 0.012
 
@@ -30,20 +32,21 @@ class Shooter(hardwareMap: HardwareMap) {
         @JvmField
         var nectarBlockerOpen = 0.7
         @JvmField
-        var nectarBlockerClose = 0.85
+        var nectarBlockerClose = 0.8
 
 
         @JvmField
-        var turretOffsetNectar = 0.145
+        var turretOffsetNectar = 0.1
         @JvmField
-        var turretOffsetPollen = 0.9
+        var turretOffsetPollen = 0.89
         @JvmField
         var turretScale = 0.151
 
         @JvmField
         var velThreshold = 20.0
+
+        @JvmStatic fun velocityFromDistance(distance: Double): Double = Polynomial(903.25291 + 10.0, 8.22947, -0.031338).evaluate(distance)
     }
-    fun velocityFromDistance(distance: Double): Double = Polynomial(1255.3649,  8.81974,  0.130091).evaluate(distance)
     fun setTargetVelocities(pollen: Double, nectar: Double) {
         targetVelocityPollen = pollen
         targetVelocityNectar = nectar
@@ -93,8 +96,17 @@ class Shooter(hardwareMap: HardwareMap) {
     }
 
     fun update() {
-        pollenMotor.power = (targetVelocityPollen - pollenMotor.velocity)*kP + targetVelocityPollen * kF
-        nectarMotor.power = (targetVelocityNectar - nectarMotor.velocity)*kP + targetVelocityNectar * kF
+        if (targetVelocityPollen != 0.0) {
+            pollenMotor.power = (targetVelocityPollen - pollenMotor.velocity)*kP + targetVelocityPollen * kF
+        } else {
+            pollenMotor.power = 0.0
+        }
+
+        if (targetVelocityNectar != 0.0) {
+            nectarMotor.power = (targetVelocityNectar - nectarMotor.velocity)*kP + targetVelocityNectar * kF
+        } else {
+            nectarMotor.power = 0.0
+        }
     }
 }
 
@@ -102,11 +114,12 @@ class Shooter(hardwareMap: HardwareMap) {
 @Config
 class ShooterTesting: LinearOpMode() {
     companion object {
-        @JvmField var targetVelocity = 0.0
+        @JvmField var targetVelocity = velocityFromDistance(36.0)
     }
     override fun runOpMode() {
         val telemetry: MultipleTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
-        val shooter = Shooter(hardwareMap)
+        val robot = Robot(this)
+        val shooter = robot.shooter
         waitForStart()
         shooter.update()
         while (opModeIsActive()) {

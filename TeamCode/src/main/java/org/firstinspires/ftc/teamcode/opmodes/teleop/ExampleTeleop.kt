@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop
 
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.opmodes.commands.RobotFunctionOpMode
@@ -15,9 +16,12 @@ import org.firstinspires.ftc.teamcode.util.timeSeconds
 @TeleOp // tells the driver station to treat this opmode as a teleop opmode (as opposed to an autonomous)
 class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     // this tells the drivetrain to move each update according to the function below
-    val follower = TeleopFollower(opmode.gamepad1, red)
+    val follower = TeleopFollower(opmode.gamepad1, opmode.gamepad2, red)
     drive.followFunction = follower.function
     opmode.waitForStart()
+    val exhub = opmode.hardwareMap.get(LynxModule::class.java, "Expansion Hub 2")
+    val chub = opmode.hardwareMap.get(LynxModule::class.java, "Control Hub")
+
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
         if (opmode.gamepad1.dpadUpWasPressed()) {
@@ -29,13 +33,14 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         }
 
         if (opmode.gamepad1.right_trigger > 0.5) {
-            transfer.mode = TransferMode.FullPower
             setTargetVelocitiesFromDistance()
             if (shooter.pollenMotor.velocity >= shooter.targetVelocityPollen){
+                transfer.mode = TransferMode.FullPower
                 shooter.openPollenBlocker()
             }
             if (shooter.nectarMotor.velocity >= shooter.targetVelocityNectar){
                 shooter.openNectarBlocker()
+                transfer.mode = TransferMode.FullPower
             }
         } else {
             transfer.mode = TransferMode.HalfPower
@@ -54,6 +59,9 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         timer = timeSeconds()
         telemetry.addData("pose", drive.localizer.pose)
         telemetry.addLine("-------AMPERAGE-------")
+        telemetry.addData("total exhub", exhub.getCurrent(CurrentUnit.AMPS))
+        telemetry.addData("total chub", chub.getCurrent(CurrentUnit.AMPS))
+
         telemetry.addData("transfer", transfer.motor.getCurrent(CurrentUnit.AMPS))
         telemetry.addData("intake", intake.motor.getCurrent(CurrentUnit.AMPS))
         telemetry.addLine("drivetrain:")

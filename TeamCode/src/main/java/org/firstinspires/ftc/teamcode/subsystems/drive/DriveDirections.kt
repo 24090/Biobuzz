@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.Utility
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Vector
 import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
@@ -56,6 +57,7 @@ class DriveDebugger: LinearOpMode() {
             telemetry.addData("x", drive.localizer.x)
             telemetry.addData("y", drive.localizer.y)
             telemetry.addData("h", drive.localizer.heading)
+            telemetry.addData("total amperage", drive.flMotor.getCurrent(CurrentUnit.AMPS) + drive.brMotor.getCurrent(CurrentUnit.AMPS) + drive.blMotor.getCurrent(CurrentUnit.AMPS) +drive.frMotor.getCurrent(CurrentUnit.AMPS))
             //telemetry.addData("pitch", drive.localizer.pinpoint.getPitch(AngleUnit.RADIANS))
             telemetry.update()
         }

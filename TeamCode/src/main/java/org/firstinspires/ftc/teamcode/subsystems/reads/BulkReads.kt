@@ -4,8 +4,8 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.HardwareMap
 
 class BulkReads(hardwareMap: HardwareMap, val initManual: Boolean = true){
-    private val lynxModules:  List<LynxModule> = listOf(
-        //hardwareMap.get(LynxModule::class.java, "Expansion Hub 2")
+    val lynxModules:  List<LynxModule> = listOf(
+        hardwareMap.get(LynxModule::class.java, "Expansion Hub 2")
     )
 
     init {

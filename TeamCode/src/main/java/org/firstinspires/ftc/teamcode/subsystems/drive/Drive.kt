@@ -27,18 +27,18 @@ class Drive(hardwareMap: HardwareMap) {
     companion object DriveConstants {
         @JvmField var lateralFactor = 0.7
 
-        @JvmField var kS = 0.13
+        @JvmField var kS = 0.22
         @JvmField var kV = 0.0065
 
         @JvmField var kA = 0.04
-        @JvmField var hP = 2.5
-        @JvmField var hD = 0.06
-        @JvmField var hT = 0.02
-        @JvmField var hS = 0.15
+        @JvmField var hP = 2.0
+        @JvmField var hD = 0.08
+        @JvmField var hT = 0.04
+        @JvmField var hS = 0.22
 
         @JvmField var xyP = 0.13
         @JvmField var xyD = 0.025
-        @JvmField var xyT = 0.5
+        @JvmField var xyT = 1.0
         @JvmField var tipAccelForward = 900.0
         @JvmField var tipAccelBackward = -200.0
     }
@@ -96,8 +96,8 @@ class Drive(hardwareMap: HardwareMap) {
 
     fun goToCircle(
         pose: Pose,
-        distanceTolerance: Double = xyT,
-        headingTolerance: Double = hT,
+        distanceTolerance: Double = xyT * 2.0,
+        headingTolerance: Double = hT * 2.0,
     ) = Sequence(
         Instant {startP2PWithTargetPose(pose)},
         WaitUntil {
@@ -106,9 +106,9 @@ class Drive(hardwareMap: HardwareMap) {
     )
     fun goToSquare(
         pose: Pose,
-        xTolerance: Double = xyT,
-        yTolerance: Double = xyT,
-        headingTolerance: Double = hT,
+        xTolerance: Double = xyT * 2.0,
+        yTolerance: Double = xyT * 2.0,
+        headingTolerance: Double = hT * 2.0,
     ) = Sequence(
         Instant {startP2PWithTargetPose(pose)},
         WaitUntil {

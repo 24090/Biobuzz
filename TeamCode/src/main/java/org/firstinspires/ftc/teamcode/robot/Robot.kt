@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.Intake
 import org.firstinspires.ftc.teamcode.subsystems.intake.Transfer
 import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
+import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter.Companion.velocityFromDistance
 import org.firstinspires.ftc.teamcode.util.Reference
 import org.firstinspires.ftc.teamcode.util.startPoseShooting
 import org.firstinspires.ftc.teamcode.util.storedRed
@@ -41,31 +42,26 @@ open class Robot(opMode: OpMode) {
     }
 
     fun setTargetVelocitiesFromDistance() {
-        val hivePosition = if (drive.localizer.pose.y < 70.75) {
-            Vector.fromCartesian(57.8, 49.0)
-        } else {
-            Vector.fromCartesian(57.8, 92.5)
-        }
-        val nectarPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading)
-        val pollenPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading)
+        val hivePosition = getHivePosition()
 
         shooter.setTargetVelocities(
-            shooter.velocityFromDistance((hivePosition - pollenPosition).length),
-            shooter.velocityFromDistance((hivePosition - nectarPosition).length) + 140.0
+            velocityFromDistance((hivePosition - getPollenPosition()).length),
+            velocityFromDistance((hivePosition - getNectarPosition()).length) * 1.2 + 50.0
         )
-
     }
-
-    fun trackHive() {
-        val hivePosition = if (drive.localizer.pose.y < 70.75) {
+    fun getHivePosition() = if (drive.localizer.pose.y < 70.75) {
             Vector.fromCartesian(57.8, 49.0)
         } else {
             Vector.fromCartesian(57.8, 92.5)
         }
-        val nectarPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading)
-        val pollenPosition = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading)
-        val pollenAngle = ((hivePosition - pollenPosition).angle) - drive.localizer.heading
-        val nectarAngle = ((hivePosition - nectarPosition).angle) - drive.localizer.heading
+
+    fun getPollenPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 0.8
+    fun getNectarPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 0.8
+
+    fun trackHive() {
+        val hivePosition = getHivePosition()
+        val pollenAngle = ((hivePosition - getPollenPosition()).angle) - drive.localizer.heading
+        val nectarAngle = ((hivePosition - getNectarPosition()).angle) - drive.localizer.heading
         shooter.setPollenTurretPos(pollenAngle)
         shooter.setNectarTurretPos(nectarAngle)
 
