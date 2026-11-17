@@ -1,25 +1,23 @@
 package org.firstinspires.ftc.teamcode.subsystems.intake
 
-import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.opmodes.commands.Robot
+import java.util.concurrent.Flow
 
 @Config
-class flowerIntake(hardwareMap: HardwareMap) {
+class FlowerIntake(hardwareMap: HardwareMap) {
     companion object {
         @JvmField
-        var flowerUp = 1.0 //temp number
+        var flowerUp = 0.38  //temp number
 
         @JvmField
-        var flowerCollect = 0.0 //temp number
+        var flowerCollect = 0.75 //temp number
     }
 
-    val flowerServo: Servo = hardwareMap.get(Servo::class.java, "pollenTurret")
+    val flowerServo: Servo = hardwareMap.get(Servo::class.java, "flowerIntake")
 
     fun flowerCollectUp() {
         flowerServo.position = flowerUp
@@ -35,12 +33,14 @@ class flowerIntake(hardwareMap: HardwareMap) {
 @Config
 class FlowerTesting: LinearOpMode() {
     override fun runOpMode() {
+        val flowerIntake = FlowerIntake(hardwareMap)
+        waitForStart()
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                flowerIntake.flowerUp
+                flowerIntake.flowerCollectUp()
             }
             else {
-                flowerIntake.flowerCollect
+                flowerIntake.flowerCollectDown()
             }
         }
     }
