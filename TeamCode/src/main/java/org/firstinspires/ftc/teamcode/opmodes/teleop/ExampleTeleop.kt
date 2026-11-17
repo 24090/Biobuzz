@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.opmodes.commands.RobotFunctionOpMode
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.followers.TeleopFollower
+import org.firstinspires.ftc.teamcode.subsystems.intake.FlowerIntake
 import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeMode
 import org.firstinspires.ftc.teamcode.subsystems.intake.TransferMode
 import org.firstinspires.ftc.teamcode.util.timeSeconds
@@ -21,6 +22,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     opmode.waitForStart()
     val exhub = opmode.hardwareMap.get(LynxModule::class.java, "Expansion Hub 2")
     val chub = opmode.hardwareMap.get(LynxModule::class.java, "Control Hub")
+    val flowerIntake = FlowerIntake(opmode.hardwareMap)
 
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed
@@ -31,6 +33,12 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         } else if (opmode.gamepad1.dpadLeftWasPressed()){
             intake.mode = IntakeMode.Reverse
         }
+        if (opmode.gamepad1.left_trigger>0.5){
+            flowerIntake.flowerCollectDown()
+        } else {
+            flowerIntake.flowerCollectUp()
+        }
+
 
         if (opmode.gamepad1.right_trigger > 0.5) {
             setTargetVelocitiesFromDistance()
