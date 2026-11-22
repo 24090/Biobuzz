@@ -48,7 +48,7 @@ open class Robot(opMode: OpMode) {
 
         shooter.setTargetVelocities(
             velocityFromDistance((hivePosition - getPollenPosition()).length),
-            velocityFromDistance((hivePosition - getNectarPosition()).length)
+            velocityFromDistance((hivePosition - getNectarPosition()).length + 20.0)
         )
     }
     fun getHivePosition() = if (drive.localizer.pose.y < 70.75) {
@@ -57,8 +57,8 @@ open class Robot(opMode: OpMode) {
          Vector.fromCartesian(hiveBasePosition.x, fieldSize - hiveBasePosition.y)
     }
 
-    fun getPollenPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.3
-    fun getNectarPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.3
+    fun getPollenPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.0
+    fun getNectarPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.0
 
     fun trackHive() {
         val hivePosition = getHivePosition()

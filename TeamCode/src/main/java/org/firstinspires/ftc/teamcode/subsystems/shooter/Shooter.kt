@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.opmodes.commands.Robot
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.DerivativeCalculator
 import org.firstinspires.ftc.teamcode.subsystems.drive.Localizer
@@ -41,9 +42,9 @@ class Shooter(hardwareMap: HardwareMap) {
         var pollenBlockerClose = 0.26
 
         @JvmField
-        var nectarBlockerOpen = 0.7
+        var nectarBlockerOpen = 0.85
         @JvmField
-        var nectarBlockerClose = 0.8
+        var nectarBlockerClose = 0.94
 
 
         @JvmField
@@ -56,7 +57,7 @@ class Shooter(hardwareMap: HardwareMap) {
         @JvmField
         var velThreshold = 20.0
 
-        @JvmStatic fun velocityFromDistance(distance: Double): Double = Polynomial(1416.83388 - 60.0, 0.626867 + 0.5, 0.0838876).evaluate(distance)
+        @JvmStatic fun velocityFromDistance(distance: Double): Double = Polynomial(1416.83388 - 70.0, 0.626867 + 0.8, 0.0838876).evaluate(distance)
     }
     val pollenVelocityTracker = DerivativeCalculator(10)
     val nectarVelocityTracker = DerivativeCalculator(10)
@@ -165,14 +166,16 @@ class ShooterTesting: LinearOpMode() {
         waitForStart()
         shooter.update()
         while (opModeIsActive()) {
-            targetPos += 0.02
-            shooter.targetVelocityPollen = 0.0
-            shooter.targetVelocityNectar = targetVelocity
+            targetPos += 0.00
+            shooter.targetVelocityPollen = targetVelocity
+            shooter.targetVelocityNectar = 0.0
             robot.reads.update()
             shooter.update()
-            telemetry.addData("raw speed", shooter.nectarMotor.velocity)
-            telemetry.addData("calculated speed", shooter.nectarVelocityTracker.get())
-            telemetry.addData("update length", shooter.nectarVelocityTracker.updateLength())
+
+            telemetry.addData("current", shooter.pollenMotor.getCurrent(CurrentUnit.AMPS))
+            telemetry.addData("raw speed", shooter.pollenMotor.velocity)
+            telemetry.addData("calculated speed", shooter.pollenVelocityTracker.get())
+            telemetry.addData("update length", shooter.pollenVelocityTracker.updateLength())
 
 
             telemetry.update()
