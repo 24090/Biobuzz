@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.commands.runBlocking
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Pose
 import org.firstinspires.ftc.teamcode.subsystems.drive.pathing.Vector
+import org.firstinspires.ftc.teamcode.subsystems.intake.FlowerIntake
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake
 import org.firstinspires.ftc.teamcode.subsystems.intake.Transfer
 import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
@@ -34,6 +35,7 @@ open class Robot(opMode: OpMode) {
     val drive = Drive(opMode.hardwareMap)
     val intake = Intake(opMode.hardwareMap)
     val transfer = Transfer(opMode.hardwareMap)
+    val flowerIntake = FlowerIntake(opMode.hardwareMap)
 
 
     var time = System.currentTimeMillis()
@@ -57,8 +59,8 @@ open class Robot(opMode: OpMode) {
          Vector.fromCartesian(hiveBasePosition.x, fieldSize - hiveBasePosition.y)
     }
 
-    fun getPollenPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.0
-    fun getNectarPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.0
+    fun getPollenPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.1
+    fun getNectarPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.1
 
     fun trackHive() {
         val hivePosition = getHivePosition()

@@ -23,7 +23,6 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
     opmode.waitForStart()
     val exhub = opmode.hardwareMap.get(LynxModule::class.java, "Expansion Hub 2")
     val chub = opmode.hardwareMap.get(LynxModule::class.java, "Control Hub")
-    val flowerIntake = FlowerIntake(opmode.hardwareMap)
 
     var timer = timeSeconds()
     while (opmode.opModeIsActive()){ // loops until the stop button is pressed

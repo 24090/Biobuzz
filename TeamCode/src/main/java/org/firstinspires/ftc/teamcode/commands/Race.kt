@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands
 
 /**
- * A command which runs all its children in parallel, and ends when its first child to end does
+ * A command which runs all its children in parallel, and ends when any of its children do
  * @param commands list of children commands
  */
 class Race(vararg commands: Command): OverrideButtonCommand("Race", true){

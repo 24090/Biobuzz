@@ -26,43 +26,44 @@ class TwoTip : AutoOpMode(true, startPoseShooting, command = { Race(
             reads.update()
         },
         Sequence(
+            // setup for shooting
             Instant {
                 shooter.closePollenBlocker()
                 trackHive()
-                shooter.targetVelocityPollen = 1180.0
+                shooter.targetVelocityPollen = 1560.0
                 intake.mode = IntakeMode.Running
                 transfer.mode = TransferMode.HalfPower
             },
-            shootPollen(),
-            Instant {
-                shooter.targetVelocityPollen = 0.0
-                intake.mode = IntakeMode.Running
-                transfer.mode = TransferMode.HalfPower
-            },
-            drive.goToCircle(gardenPose + Pose(0.0, 12.0, 0.0)),
-            Race(
-                Sequence(
+            shootPollen(), // actually shoot
+            Instant { shooter.targetVelocityPollen = 0.0 }, // post shooting turn off the shooter for energy
+
+
+            // getting balls from the garden
+            drive.goToCircle(gardenPose + Pose(0.0, 12.0, 0.0)), // go right in front of the garden
+
+            Race( // a race command runs all of its subcommands at once and ends when any of its subcommands stop
+                Sequence( // sequence does all of its subcommands in order, so this goes to the garden position and then waits two seconds
                     drive.goToCircle(gardenPose),
-                    Sleep(100.0)
+                    Sleep(2.0)
                 ),
-                Sleep(4.0)
-            ),
-            Instant {
-                shooter.targetVelocityPollen = 1180.0
-                intake.mode = IntakeMode.Running
-                transfer.mode = TransferMode.HalfPower
-            },
+                Sleep(4.0) // this just waits four seconds
+            ), // the race command is used here in case the bot can't reach the garden position, it will only spend four seconds waiting
+
+            // setup for shooting again
+            Instant { shooter.targetVelocityPollen = 1560.0 },
             drive.goToCircle(startPoseShooting),
-            shootPollen(),
+            shootPollen(), // actually shoot
+            Instant { shooter.targetVelocityPollen = 0.0 }, // post shooting turn off the shooter for energy
+
+            // TODO:
+            //  - intake the first flower
+            //  - shoot into the hive (on the other side this time)
+            //  - intake from the second flower
+            //  - shoot into the hive again
+            //  - make sure parking path works (it will be a little diffent since the robot doesnt need to cross the field)
+
+            // parking path
             drive.goToCircle(startPoseShooting - Pose(36.0, 0.0, 0.0)),
-            drive.goToCircle(gardenPose + Pose(3.5, 28.0, PI)),
-            drive.goToCircle(gardenPose + Pose(3.5, 32.0, PI)),
-            drive.goToCircle(gardenPose + Pose(3.5, 28.0, PI)),
-            drive.goToCircle(gardenPose + Pose(3.5, 32.0, PI)),
-            drive.goToCircle(gardenPose + Pose(3.5, 28.0, PI)),
-            drive.goToCircle(gardenPose + Pose(3.5, 32.0, PI)),
-            drive.goToCircle(gardenPose + Pose(3.5, 28.0, PI)),
-            drive.goToCircle(gardenPose + Pose(3.5, 32.0, PI)),
             drive.goToCircle(Pose(robotWidth / 2.0, fieldSize - robotLength/2.0 - 41.0, PI/2.0)),
         ),
         Forever {

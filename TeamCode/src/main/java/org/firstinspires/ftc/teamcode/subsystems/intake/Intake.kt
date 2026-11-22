@@ -22,11 +22,11 @@ class Intake(hardwareMap: HardwareMap) {
     fun update(){
         when(mode) {
             IntakeMode.Stopped ->
-                motor.power = (0 - motor.velocity) * 0.0008
+                motor.power = (0 - motor.velocity) * 0.0012
             IntakeMode.Running ->
-                motor.power = clamp((800 - motor.velocity) * 0.0008 + 0.35, -0.75, 0.75)
+                motor.power = clamp((1600 - motor.velocity) * 0.0012 + 0.7, -0.85, 0.85)
             IntakeMode.Reverse ->
-                motor.power = (-800 - motor.velocity) * 0.0008 - 0.35
+                motor.power = (-800 - motor.velocity) * 0.0012 - 0.35
         }
     }
 }
