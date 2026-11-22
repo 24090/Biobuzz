@@ -5,6 +5,8 @@ import java.util.LinkedList
 class DerivativeCalculator(val storeCount: Int) {
     private var pastStates = LinkedList<Pair<Double, Double>>()
 
+    fun updateLength() = pastStates.last().first - pastStates.first().first
+
     fun update(newX: Number, newY: Number) = update(Pair(newX, newY))
 
     fun update(newState: Pair<Number, Number>){
@@ -13,5 +15,9 @@ class DerivativeCalculator(val storeCount: Int) {
         }
         pastStates.add(Pair(newState.first.toDouble(), newState.second.toDouble()))
     }
-    fun get() = (pastStates[0].second - pastStates[pastStates.size - 1].second) / (pastStates[0].first - pastStates[pastStates.size - 1].first)
+    fun get() = if (pastStates.size >= 2) {
+        (pastStates.first().second - pastStates.last().second) / (pastStates.first().first - pastStates.last().first)
+    } else {
+        null
+    }
 }

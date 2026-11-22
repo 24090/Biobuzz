@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystems.reads.Reads
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter.Companion.velocityFromDistance
 import org.firstinspires.ftc.teamcode.util.Reference
+import org.firstinspires.ftc.teamcode.util.fieldSize
+import org.firstinspires.ftc.teamcode.util.hiveBasePosition
 import org.firstinspires.ftc.teamcode.util.startPoseShooting
 import org.firstinspires.ftc.teamcode.util.storedRed
 import kotlin.math.PI
@@ -46,17 +48,17 @@ open class Robot(opMode: OpMode) {
 
         shooter.setTargetVelocities(
             velocityFromDistance((hivePosition - getPollenPosition()).length),
-            velocityFromDistance((hivePosition - getNectarPosition()).length) * 1.2 + 50.0
+            velocityFromDistance((hivePosition - getNectarPosition()).length)
         )
     }
     fun getHivePosition() = if (drive.localizer.pose.y < 70.75) {
-            Vector.fromCartesian(57.8, 49.0)
-        } else {
-            Vector.fromCartesian(57.8, 92.5)
-        }
+        hiveBasePosition
+    } else {
+         Vector.fromCartesian(hiveBasePosition.x, fieldSize - hiveBasePosition.y)
+    }
 
-    fun getPollenPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 0.8
-    fun getNectarPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 0.8
+    fun getPollenPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, 4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.3
+    fun getNectarPosition() = drive.localizer.pose.vector() + Vector.fromCartesian(0.0, -4.13).rotated(drive.localizer.heading) + drive.localizer.poseVel.vector() * 1.3
 
     fun trackHive() {
         val hivePosition = getHivePosition()
@@ -64,7 +66,6 @@ open class Robot(opMode: OpMode) {
         val nectarAngle = ((hivePosition - getNectarPosition()).angle) - drive.localizer.heading
         shooter.setPollenTurretPos(pollenAngle)
         shooter.setNectarTurretPos(nectarAngle)
-
     }
 }
 
@@ -79,6 +80,7 @@ open class AutoOpMode(val red: Boolean, val startPose: Pose, val command: Robot.
     val robot = Robot(opmode)
     val command = robot.command()
     robot.drive.localizer.pose = startPose.mirroredIf(!storedRed.get())
+    robot.drive.localizer.pinpoint.recalibrateIMU()
     opmode.sleep(300)
     robot.trackHive()
     opmode.waitForStart()

@@ -10,19 +10,30 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.opmodes.commands.Robot
+import org.firstinspires.ftc.teamcode.subsystems.controlsystems.DerivativeCalculator
 import org.firstinspires.ftc.teamcode.subsystems.drive.Localizer
 import org.firstinspires.ftc.teamcode.subsystems.controlsystems.VoltageCompensatedMotor
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter.Companion.velocityFromDistance
 import org.firstinspires.ftc.teamcode.util.Polynomial
+import org.firstinspires.ftc.teamcode.util.timeSeconds
 import kotlin.math.PI
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 @Config
 class Shooter(hardwareMap: HardwareMap) {
     companion object {
         @JvmField
-        var kF = 0.00033
+        var kS = 0.06
+
         @JvmField
-        var kP = 0.012
+        var kV = 0.000293
+
+        @JvmField
+        var kP = 0.0008
+
+        @JvmField
+        var kP2 = 0.000035
 
         @JvmField
         var pollenBlockerOpen = 0.4
@@ -36,17 +47,20 @@ class Shooter(hardwareMap: HardwareMap) {
 
 
         @JvmField
-        var turretOffsetNectar = 0.1
+        var turretOffsetNectar = 0.13
         @JvmField
-        var turretOffsetPollen = 0.89
+        var turretOffsetPollen = 0.755
         @JvmField
         var turretScale = 0.151
 
         @JvmField
         var velThreshold = 20.0
 
-        @JvmStatic fun velocityFromDistance(distance: Double): Double = Polynomial(903.25291 + 10.0, 8.22947, -0.031338).evaluate(distance)
+        @JvmStatic fun velocityFromDistance(distance: Double): Double = Polynomial(1416.83388 - 60.0, 0.626867 + 0.5, 0.0838876).evaluate(distance)
     }
+    val pollenVelocityTracker = DerivativeCalculator(10)
+    val nectarVelocityTracker = DerivativeCalculator(10)
+
     fun setTargetVelocities(pollen: Double, nectar: Double) {
         targetVelocityPollen = pollen
         targetVelocityNectar = nectar
@@ -67,7 +81,7 @@ class Shooter(hardwareMap: HardwareMap) {
     val localizer = Localizer(hardwareMap)
 
     init {
-        pollenMotor.direction = DcMotorSimple.Direction.FORWARD
+        pollenMotor.direction = DcMotorSimple.Direction.REVERSE
         nectarMotor.direction = DcMotorSimple.Direction.REVERSE
     }
 
@@ -86,24 +100,50 @@ class Shooter(hardwareMap: HardwareMap) {
     fun closeNectarBlocker() {
         nectarBLockerServo.position = nectarBlockerClose
     }
+    fun turretWrap(angle: Double, turretOffset: Double, servoPosition: Double) =
+        (((angle * turretScale + turretOffset)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale)).let {
+            if (it +2.0*PI*turretScale <= 1.0 && servoPosition > it + PI*turretScale) {
+                it + 2.0*PI*turretScale
+            } else if (it-2*PI*turretScale >= 0.0 && servoPosition > it - PI*turretScale) {
+                it - 2.0*PI*turretScale
+            } else {
+                it
+            }
+        }
 
     fun setPollenTurretPos(angle: Double) {
-        pollenTurretServo.position = (((angle * turretScale + turretOffsetPollen)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale))
+        pollenTurretServo.position = turretWrap(
+            angle,
+            turretOffsetPollen,
+            pollenTurretServo.position
+        )
     }
 
     fun setNectarTurretPos(angle: Double) {
-        nectarTurretServo.position = (((angle * turretScale + turretOffsetNectar)%(2*PI * turretScale)+(2*PI * turretScale))%(2*PI * turretScale))
+        nectarTurretServo.position = turretWrap(
+            angle,
+            turretOffsetNectar,
+            nectarTurretServo.position
+        )
     }
 
     fun update() {
+        pollenVelocityTracker.update(timeSeconds(), pollenMotor.currentPosition)
+        nectarVelocityTracker.update(timeSeconds(), nectarMotor.currentPosition)
+
+//        val pollenVelocity = (if (pollenVelocityTracker.updateLength() < 0.15) pollenVelocityTracker.get() else null) ?: pollenMotor.velocity
+//        val nectarVelocity = (if (nectarVelocityTracker.updateLength() < 0.15) nectarVelocityTracker.get() else null) ?: pollenMotor.velocity
+
         if (targetVelocityPollen != 0.0) {
-            pollenMotor.power = (targetVelocityPollen - pollenMotor.velocity)*kP + targetVelocityPollen * kF
+            val error = (targetVelocityPollen - pollenMotor.velocity)
+            pollenMotor.power = error*error.absoluteValue*kP2 + error*kP + targetVelocityPollen * kV + kS * sign(targetVelocityPollen)
         } else {
             pollenMotor.power = 0.0
         }
 
         if (targetVelocityNectar != 0.0) {
-            nectarMotor.power = (targetVelocityNectar - nectarMotor.velocity)*kP + targetVelocityNectar * kF
+            val error = (targetVelocityNectar - nectarMotor.velocity)
+            nectarMotor.power = error*error.absoluteValue*kP2 + error*kP + targetVelocityNectar * kV + kS * sign(targetVelocityNectar)
         } else {
             nectarMotor.power = 0.0
         }
@@ -114,7 +154,9 @@ class Shooter(hardwareMap: HardwareMap) {
 @Config
 class ShooterTesting: LinearOpMode() {
     companion object {
-        @JvmField var targetVelocity = velocityFromDistance(36.0)
+        @JvmField var targetVelocity = velocityFromDistance(48.83)
+        @JvmField var targetPos = 0.0
+
     }
     override fun runOpMode() {
         val telemetry: MultipleTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -123,16 +165,22 @@ class ShooterTesting: LinearOpMode() {
         waitForStart()
         shooter.update()
         while (opModeIsActive()) {
-            shooter.targetVelocityPollen = targetVelocity
+            targetPos += 0.02
+            shooter.targetVelocityPollen = 0.0
             shooter.targetVelocityNectar = targetVelocity
+            robot.reads.update()
             shooter.update()
-            telemetry.addData("encoder speed", shooter.pollenMotor.velocity)
+            telemetry.addData("raw speed", shooter.nectarMotor.velocity)
+            telemetry.addData("calculated speed", shooter.nectarVelocityTracker.get())
+            telemetry.addData("update length", shooter.nectarVelocityTracker.updateLength())
+
+
             telemetry.update()
             if (gamepad1.a) {
-                shooter.openPollenBlocker()
+                shooter.closePollenBlocker()
             }
             else {
-                shooter.closePollenBlocker()
+                shooter.openPollenBlocker()
             }
             if (gamepad1.y) {
                 shooter.openNectarBlocker()
@@ -147,14 +195,14 @@ class ShooterTesting: LinearOpMode() {
             }else if (gamepad1.b) {
                 shooter.setPollenTurretPos(-PI/2)
             } else {
-                shooter.setPollenTurretPos(0.0)
+                shooter.setPollenTurretPos(targetPos)
             }
             if (gamepad1.dpad_down) {
                 shooter.setNectarTurretPos(PI/2)
             } else if (gamepad1.dpad_up) {
                 shooter.setNectarTurretPos(-PI/2)
             } else {
-                shooter.setNectarTurretPos(0.0)
+                shooter.setNectarTurretPos(targetPos)
             }
         }
     }

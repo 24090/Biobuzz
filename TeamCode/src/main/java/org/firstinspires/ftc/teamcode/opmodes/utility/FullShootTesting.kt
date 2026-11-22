@@ -20,6 +20,12 @@ class FullShootTesting: RobotFunctionOpMode({opmode ->
     transfer.mode = TransferMode.HalfPower
     shooter.closeNectarBlocker()
     shooter.closePollenBlocker()
+    telemetry.addData("pollen vel", shooter.pollenMotor.velocity)
+    telemetry.addData("nectar vel", shooter.nectarMotor.velocity)
+    telemetry.addData("hive distance pollen", (getHivePosition() - getPollenPosition()).length)
+    telemetry.addData("hive distance pollen", (getHivePosition() - getNectarPosition()).length)
+    telemetry.update()
+    trackHive()
     opmode.waitForStart()
     while (opmode.opModeIsActive()){
         reads.update()
@@ -27,20 +33,17 @@ class FullShootTesting: RobotFunctionOpMode({opmode ->
         transfer.update()
         shooter.update()
         trackHive()
-        if (shooter.pollenMotor.velocity >= targetVelocity - 20.0) {
+        if (shooter.nectarMotor.velocity >= targetVelocity - 20.0) {
             shooter.openNectarBlocker()
             transfer.mode = TransferMode.FullPower
         } else {
-            shooter.closeNectarBlocker()
             transfer.mode = TransferMode.HalfPower
-
         }
 
-        if (shooter.nectarMotor.velocity >= targetVelocity - 20.0) {
+        if (shooter.pollenMotor.velocity >= targetVelocity - 20.0) {
             shooter.openPollenBlocker()
             transfer.mode = TransferMode.FullPower
         } else {
-            shooter.closePollenBlocker()
             transfer.mode = TransferMode.HalfPower
         }
         shooter.targetVelocityPollen = targetVelocity
@@ -49,8 +52,6 @@ class FullShootTesting: RobotFunctionOpMode({opmode ->
         telemetry.addData("nectar vel", shooter.nectarMotor.velocity)
         telemetry.addData("hive distance pollen", (getHivePosition() - getPollenPosition()).length)
         telemetry.addData("hive distance pollen", (getHivePosition() - getNectarPosition()).length)
-
-
         telemetry.update()
     }
 })

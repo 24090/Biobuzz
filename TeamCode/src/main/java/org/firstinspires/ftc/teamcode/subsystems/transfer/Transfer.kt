@@ -41,6 +41,7 @@ class TransferTesting(): LinearOpMode() {
         val telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         // initialisation
         val transfer = Transfer(hardwareMap)
+        transfer.mode = TransferMode.FullPower
         waitForStart()
         // running
         while (opModeIsActive()){

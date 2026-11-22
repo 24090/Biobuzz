@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.FlowerIntake
 import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeMode
 import org.firstinspires.ftc.teamcode.subsystems.intake.TransferMode
 import org.firstinspires.ftc.teamcode.util.timeSeconds
+import kotlin.math.abs
 
 /**
  * This is an example implementation of a `RobotFunctionOpmode`
@@ -29,9 +30,9 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         if (opmode.gamepad1.dpadUpWasPressed()) {
             intake.mode = IntakeMode.Running
         } else if (opmode.gamepad1.dpadDownWasPressed()) {
-            intake.mode = IntakeMode.Stopped
-        } else if (opmode.gamepad1.dpadLeftWasPressed()){
             intake.mode = IntakeMode.Reverse
+        } else if (opmode.gamepad1.dpadLeftWasPressed()){
+            intake.mode = IntakeMode.Stopped
         }
         if (opmode.gamepad1.left_trigger>0.5){
             flowerIntake.flowerCollectDown()
@@ -41,18 +42,16 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
 
 
         if (opmode.gamepad1.right_trigger > 0.5) {
-            setTargetVelocitiesFromDistance()
-            if (shooter.pollenMotor.velocity >= shooter.targetVelocityPollen){
+            if (abs(shooter.pollenMotor.velocity - shooter.targetVelocityPollen) <= 40.0){
                 transfer.mode = TransferMode.FullPower
                 shooter.openPollenBlocker()
             }
-            if (shooter.nectarMotor.velocity >= shooter.targetVelocityNectar){
+            if (abs(shooter.nectarMotor.velocity - shooter.targetVelocityNectar) <= 40.0){
                 shooter.openNectarBlocker()
                 transfer.mode = TransferMode.FullPower
             }
         } else {
             transfer.mode = TransferMode.HalfPower
-            shooter.setTargetVelocities(0.0)
             shooter.closePollenBlocker()
             shooter.closeNectarBlocker()
         }
@@ -61,6 +60,7 @@ class ExampleTeleop: RobotFunctionOpMode({ opmode ->
         drive.update() // updates the drivetrain subsystem
         shooter.update()
         trackHive()
+        setTargetVelocitiesFromDistance()
         intake.update()
         transfer.update()
         telemetry.addData("loop time (dms)", ((timeSeconds() - timer)*10000).toInt())
