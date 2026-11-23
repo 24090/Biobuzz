@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.commands.Forever
-import org.firstinspires.ftc.teamcode.commands.Instant
+import org.firstinspires.ftc.teamcode.commands.*
 import org.firstinspires.ftc.teamcode.commands.Race
 import org.firstinspires.ftc.teamcode.commands.Sequence
 import org.firstinspires.ftc.teamcode.commands.Sleep
@@ -55,6 +55,22 @@ class TwoTip : AutoOpMode(true, startPoseShooting, command = { Race(
             shootPollen(), // actually shoot
             Instant { shooter.targetVelocityPollen = 0.0 }, // post shooting turn off the shooter for energy
 
+            drive.goToCircle(15,47, Math.toRadians(180)),
+            Instant { flowerIntake.flowerCollectDown() },
+            drive.goToCircle(11.5, 47, Math.toRadians(180)),
+            Parallel(
+                Instant { flowerIntake.flowerCollectUp() },
+                drive.goToCircle(46.5, 125, Math.toRadians(90))
+            ),
+            shootPollen(),
+            Instant { flowerIntake.flowerCollectDown() },
+            drive.gotToCircle(46.5, 129.5, Math.toRadians(90)),
+            shootPollen(),
+            Parallel(
+                Instant { flowerIntake.flowerCollectUp()},
+
+            ),
+            
             // TODO:
             //  - intake the first flower
             //  - shoot into the hive (on the other side this time)
