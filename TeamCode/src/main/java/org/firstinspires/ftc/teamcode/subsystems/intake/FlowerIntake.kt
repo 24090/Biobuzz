@@ -14,7 +14,7 @@ class FlowerIntake(hardwareMap: HardwareMap) {
         var flowerUp = 0.38  //temp number
 
         @JvmField
-        var flowerCollect = 0.75 //temp number
+        var flowerCollect = 0.70 //temp number
     }
 
     val flowerServo: Servo = hardwareMap.get(Servo::class.java, "flowerIntake")

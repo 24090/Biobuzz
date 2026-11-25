@@ -84,6 +84,8 @@ open class AutoOpMode(val red: Boolean, val startPose: Pose, val command: Robot.
     robot.drive.localizer.pose = startPose.mirroredIf(!storedRed.get())
     robot.drive.localizer.pinpoint.recalibrateIMU()
     opmode.sleep(300)
+    robot.drive.localizer.pose = startPose.mirroredIf(!storedRed.get())
+    drive.localizer.pinpoint.update()
     robot.trackHive()
     opmode.waitForStart()
 

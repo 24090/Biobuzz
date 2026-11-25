@@ -54,32 +54,31 @@ class TwoTip : AutoOpMode(true, startPoseShooting, command = { Race(
             drive.goToCircle(startPoseShooting),
             shootPollen(), // actually shoot
             Instant { shooter.targetVelocityPollen = 0.0 }, // post shooting turn off the shooter for energy
-
-            drive.goToCircle(15,47, Math.toRadians(180)),
-            Instant { flowerIntake.flowerCollectDown() },
-            drive.goToCircle(11.5, 47, Math.toRadians(180)),
             Parallel(
-                Instant { flowerIntake.flowerCollectUp() },
-                drive.goToCircle(46.5, 125, Math.toRadians(90))
+                drive.goToCircle(Pose(15.0,47.0, Math.toRadians(180.0)), 10.0, 10.0),
+                Instant { flowerIntake.flowerCollectDown() },
             ),
+            Sleep(2.0),
+            drive.goToCircle(Pose(46.5, 125.0, Math.toRadians(90.0))),
+            Instant {
+                trackHive()
+                shooter.targetVelocityPollen = 1560.0
+            },
             shootPollen(),
             Instant { flowerIntake.flowerCollectDown() },
-            drive.gotToCircle(46.5, 129.5, Math.toRadians(90)),
+            drive.goToCircle(Pose(46.5, 129.5, Math.toRadians(90.0))),
+            Instant {
+                trackHive()
+                shooter.targetVelocityPollen = 1560.0
+            },
+            Sleep(2.0),
             shootPollen(),
             Parallel(
                 Instant { flowerIntake.flowerCollectUp()},
 
             ),
-            
-            // TODO:
-            //  - intake the first flower
-            //  - shoot into the hive (on the other side this time)
-            //  - intake from the second flower
-            //  - shoot into the hive again
-            //  - make sure parking path works (it will be a little diffent since the robot doesnt need to cross the field)
 
             // parking path
-            drive.goToCircle(startPoseShooting - Pose(36.0, 0.0, 0.0)),
             drive.goToCircle(Pose(robotWidth / 2.0, fieldSize - robotLength/2.0 - 41.0, PI/2.0)),
         ),
         Forever {
@@ -87,6 +86,8 @@ class TwoTip : AutoOpMode(true, startPoseShooting, command = { Race(
             shooter.update()
             intake.update()
             transfer.update()
+            telemetry.addData("pose", drive.localizer.pose)
+            telemetry.update()
         },
     )
 })

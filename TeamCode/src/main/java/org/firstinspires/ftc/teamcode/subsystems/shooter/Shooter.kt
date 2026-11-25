@@ -48,16 +48,16 @@ class Shooter(hardwareMap: HardwareMap) {
 
 
         @JvmField
-        var turretOffsetNectar = 0.13
+        var turretOffsetNectar = 0.21
         @JvmField
-        var turretOffsetPollen = 0.755
+        var turretOffsetPollen = 0.71
         @JvmField
         var turretScale = 0.151
 
         @JvmField
         var velThreshold = 20.0
 
-        @JvmStatic fun velocityFromDistance(distance: Double): Double = Polynomial(1416.83388 - 70.0, 0.626867 + 0.8, 0.0838876).evaluate(distance)
+        @JvmStatic fun velocityFromDistance(distance: Double): Double = Polynomial(1472.6562, -1.71791, 0.0559552).evaluate(distance)
     }
     val pollenVelocityTracker = DerivativeCalculator(10)
     val nectarVelocityTracker = DerivativeCalculator(10)
@@ -83,7 +83,7 @@ class Shooter(hardwareMap: HardwareMap) {
 
     init {
         pollenMotor.direction = DcMotorSimple.Direction.REVERSE
-        nectarMotor.direction = DcMotorSimple.Direction.REVERSE
+        nectarMotor.direction = DcMotorSimple.Direction.FORWARD
     }
 
     fun openPollenBlocker() {
@@ -160,12 +160,16 @@ class ShooterTesting: LinearOpMode() {
 
     }
     override fun runOpMode() {
-        val telemetry: MultipleTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+        val telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         val robot = Robot(this)
         val shooter = robot.shooter
+        val startTime = timeSeconds()
+        var endTime = timeSeconds()
+
         waitForStart()
         shooter.update()
         while (opModeIsActive()) {
+            if (shooter.pollenMotor.velocity < shooter.targetVelocityPollen - 20) endTime = timeSeconds()
             targetPos += 0.00
             shooter.targetVelocityPollen = targetVelocity
             shooter.targetVelocityNectar = 0.0
@@ -176,7 +180,7 @@ class ShooterTesting: LinearOpMode() {
             telemetry.addData("raw speed", shooter.pollenMotor.velocity)
             telemetry.addData("calculated speed", shooter.pollenVelocityTracker.get())
             telemetry.addData("update length", shooter.pollenVelocityTracker.updateLength())
-
+            telemetry.addData("spinup time", endTime - startTime)
 
             telemetry.update()
             if (gamepad1.a) {
